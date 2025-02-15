@@ -43,6 +43,7 @@ class AppState:
     account_labels: dict[AccountPath, AccountLabel]
     currency_labels: dict[Currency, str]
     pinned_accounts: list[tuple[AccountPath, str]]
+    errors: list[Exception]
 
 
 class Config(BaseModel):

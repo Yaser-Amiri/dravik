@@ -4,9 +4,8 @@ from dravik.services import AppServices
 from textual.reactive import reactive
 from textual.app import App
 
-from dravik.screens import TransactionsScreen, HelpScreen
+from dravik.screens import TransactionsScreen, HelpScreen, QuitScreen, ErrorScreen
 from dravik.models import AppState, LedgerSnapshot
-from dravik.screens.quit import QuitScreen
 
 
 EMPTY_STATE = AppState(
@@ -20,6 +19,7 @@ EMPTY_STATE = AppState(
     account_labels={},
     currency_labels={},
     pinned_accounts=[],
+    errors=[],
 )
 
 
@@ -33,6 +33,7 @@ class Dravik(App[None]):
     MODES = {
         "transactions": TransactionsScreen,
         "help": HelpScreen,
+        "error": ErrorScreen,
     }
 
     state: reactive[AppState] = reactive(lambda: EMPTY_STATE)
@@ -50,5 +51,13 @@ class Dravik(App[None]):
 
     async def on_mount(self) -> None:
         await self.services.create_configs()
+
+        try:
+            await self.services.initial_check()
+        except Exception as e:
+            self.state.errors = [e]
+            self.switch_mode("error")
+            return
+
         self.state = await self.services.get_initial_state()
         self.switch_mode("transactions")

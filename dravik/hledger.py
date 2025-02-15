@@ -52,6 +52,22 @@ class Hledger:
             "stats",
         ]
 
+    def get_version_command(self) -> list[str]:
+        return [
+            "hledger",
+            "--version",
+        ]
+
+    def get_check_command(self, strict: bool = False) -> list[str]:
+        file_params = ["-f", self.ledger_file_path] if self.ledger_file_path else []
+        strict_params = ["--strict"] if strict else []
+        return [
+            "hledger",
+            *file_params,
+            "check",
+            *strict_params,
+        ]
+
     async def read(self) -> LedgerSnapshot:
         transaction_proc = await run_cmd(self.get_transaction_command())
         balances_proc = await run_cmd(self.get_balances_command())
@@ -99,3 +115,17 @@ class Hledger:
             transactions=transactions,
             stats=stats_result[0].decode(),
         )
+
+    async def get_version(self) -> str:
+        proc = await run_cmd(self.get_version_command())
+        result = await proc.communicate()
+        if proc.returncode != 0:
+            raise Exception(result[1].decode())
+        return result[0].decode()
+
+    async def check(self, strict: bool = False) -> str:
+        proc = await run_cmd(self.get_check_command(strict))
+        result = await proc.communicate()
+        if proc.returncode != 0:
+            raise Exception(result[1].decode())
+        return result[0].decode()

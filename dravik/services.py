@@ -25,6 +25,7 @@ class AppServices:
             account_labels=configs.account_labels,
             currency_labels=configs.currency_labels,
             pinned_accounts=[(a.account, a.color) for a in configs.pinned_accounts],
+            errors=[],
         )
 
     async def read_hledger_data(self, path: str | None = None) -> LedgerSnapshot:
@@ -41,3 +42,9 @@ class AppServices:
         if not self.app.config_path.exists():
             with open(self.app.config_path, "w") as f:
                 f.write(Config().model_dump_json(indent=4))
+
+    async def initial_check(self) -> None:
+        configs = await self.read_configs()
+        hledger = Hledger(configs.ledger)
+        await hledger.get_version()
+        await hledger.check()

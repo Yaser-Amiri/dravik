@@ -1,0 +1,22 @@
+ErrorScreen {
+  align: center middle;
+  background: $error;
+}
+
+#error--container {
+  width: 80;
+  height: 20;
+  padding-left: 2;
+  padding-right: 2;
+  padding-top: 1;
+  border: thick $background 80%;
+  background: $surface;
+}
+
+#error--actions {
+  align: center bottom;
+}
+
+#error--actions > Button {
+  margin: 0 2 1 2;
+}
