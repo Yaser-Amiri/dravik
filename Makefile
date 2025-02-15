@@ -52,6 +52,5 @@ mypy:
 .PHONY: mypy
 
 build:
->	rm -rf dist
->	uv build
+>	uv bulid
 .PHONY: build
