@@ -42,6 +42,7 @@ class AppServices:
         if not self.app.config_path.exists():
             with open(self.app.config_path, "w") as f:
                 f.write(Config().model_dump_json(indent=4))
+                print(f"Wrote the config file on: {self.app.config_path}")
 
     async def initial_check(self) -> None:
         configs = await self.read_configs()

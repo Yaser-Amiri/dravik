@@ -50,3 +50,7 @@ lint:
 mypy:
 >	uv run mypy $(PROJECT_NAME) --strict
 .PHONY: mypy
+
+build:
+>	uv bulid
+.PHONY: build
