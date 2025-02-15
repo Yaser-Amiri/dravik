@@ -109,7 +109,7 @@ wheels = [
 
 [[package]]
 name = "dravik"
-version = "0.2.post1.dev1+gf58ed3c.d20250215"
+version = "0.2.post1.dev0+gf4c6084.d20250215"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },

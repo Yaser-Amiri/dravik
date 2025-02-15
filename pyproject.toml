@@ -38,7 +38,7 @@ dev = [
 
 [project.scripts]
 dravik = "dravik.__main__:run_app"
-dravik-init = "dravik.__main__:create_configs"
+dravik-init = "dravik.__main__:init"
 
 [project.urls]
 "Source" = "https://github.com/Yaser-Amiri/dravik"
