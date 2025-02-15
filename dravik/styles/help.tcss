@@ -1,0 +1,28 @@
+HelpScreen {
+  layout: grid;
+  grid-size: 2 2;
+  background: $panel;
+  align: center top ;
+}
+
+
+#help--paths {
+  padding: 1 3 3 3;
+  margin: 1;
+}
+
+#help--hledger-stats {
+  padding: 1;
+  margin: 1;
+  row-span: 2;
+}
+
+#help--about {
+  padding: 1 3 3 3;
+  margin: 1;
+}
+
+
+.help--padded-on-left {
+  padding-left: 2;
+}

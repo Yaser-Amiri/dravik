@@ -1,0 +1,71 @@
+[project]
+name = "dravik"
+version = "0.1"
+description = "Hledger TUI"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Yaser Amiri", email = "yaser.amiri95@gmail.com" },
+]
+readme = "README.md"
+requires-python = ">=3.13"
+keywords = ["python", "cli", "hledger", "python3", "UV", "textual", "terminal", "tui", "accounting"]
+dependencies = [
+    "pydantic>=2.10.6",
+    "textual==1.0.0",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Office/Business :: Financial :: Accounting",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Terminals",
+    "Typing :: Typed",
+]
+
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "pyright==1.1.393",
+    "ruff>=0.9.4",
+    "textual-dev>=1.7.0",
+]
+
+[project.scripts]
+dravik = "dravik.__main__:run"
+
+[project.urls]
+"Source" = "https://github.com/Yaser-Amiri/dravik"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build]
+exclude = [
+    "/.git",
+    "/.github",
+    "/.gitignore",
+    "/.editorconfig",
+    "/Makefile",
+    "/.vscode",
+    "/.idea",
+    "*.pyc",
+    "__pycache__",
+    "/.env",
+    "/.venv",
+    "/.pytest_cache",
+    "/.ruff_cache",
+    "/.mypy_cache",
+    "/dist",
+    "/build",
+    "*.egg-info",
+]

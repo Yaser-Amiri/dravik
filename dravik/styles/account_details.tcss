@@ -1,0 +1,26 @@
+AccountDetailsScreen {
+  align: center middle;
+}
+
+#account-details--container {
+  width: 80;
+  height: 13;
+  padding-left: 2;
+  padding-right: 2;
+  padding-top: 1;
+  border: thick $background 80%;
+  background: $surface;
+}
+
+.account-details--label {
+  height: auto;
+  width: 100%;
+}
+
+#account-details--actions {
+  align: center bottom;
+}
+
+#account-details--actions > Button {
+  margin-bottom: 1;
+}

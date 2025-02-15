@@ -1,0 +1,70 @@
+#transactions--header {
+  height: 1;
+  content-align: center middle;
+  background: $panel;
+}
+
+#transactions--statusbar {
+  grid-size: 4 1;
+  content-align: center middle;
+  align: center middle;
+  margin-bottom: 1;
+  margin-left: 1;
+  margin-right: 1;
+  height: auto;
+}
+
+.transactions--holding {
+  padding: 1;
+  width: 100%;
+  height: 100%;
+  text_align: center
+}
+
+#transactions--searchbar-inputs {
+  grid-size: 4 1;
+  margin-bottom: 1;
+  height: auto;
+}
+
+#transactions--searchbar-labels {
+  grid-size: 4 1;
+  height: auto;
+  margin-bottom: 1;
+}
+
+#transactions--searchbar-labels > Label {
+  padding-left: 1
+}
+
+
+#transactions--grid {
+  layout: grid;
+  grid-size: 2;
+  grid-columns: 1fr 3fr;
+  grid-rows: 1fr;
+}
+
+#transactions--accounts-tree-search {
+  margin-bottom: 1;
+}
+
+#transactions--left-side {
+  width: 100%;
+  height: 100%;
+  background: $panel;
+  border: orange;
+}
+
+#transactions--left-side > Tree {
+  background: $boost;
+  color: auto;
+  margin-bottom: 1;
+  padding: 1;
+}
+
+#transactions--right-side {
+  height: 100%;
+  background: $panel;
+  border: orange;
+}

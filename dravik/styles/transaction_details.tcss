@@ -1,0 +1,32 @@
+TransactionDetailsScreen {
+  align: center middle;
+}
+
+#transaction-details--container {
+  width: 80;
+  height: 25;
+  padding-left: 2;
+  padding-right: 2;
+  padding-top: 1;
+  border: thick $background 80%;
+  background: $surface;
+}
+
+#transaction-details--postings {
+  content-align: center middle;
+  align: center middle;
+  height: auto;
+}
+
+#transaction-details--postings > Label {
+  height: auto;
+  width: 100%;
+}
+
+#transaction-details--actions {
+  align: center bottom;
+}
+
+#transaction-details--actions > Button {
+  margin-bottom: 1;
+}

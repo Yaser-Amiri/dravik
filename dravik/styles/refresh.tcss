@@ -1,0 +1,32 @@
+RefreshScreen {
+  align: center middle;
+}
+
+#refresh--container {
+  width: 80;
+  height: 10;
+  padding-left: 2;
+  padding-right: 2;
+  padding-top: 1;
+  border: thick $background 80%;
+  background: $surface;
+}
+
+#refresh--postings {
+  content-align: center middle;
+  align: center middle;
+  height: auto;
+}
+
+#refresh--postings > Label {
+  height: auto;
+  width: 100%;
+}
+
+#refresh--actions {
+  align: center bottom;
+}
+
+#refresh--actions > Button {
+  margin: 0 2 1 2;
+}
