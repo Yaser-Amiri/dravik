@@ -1,6 +1,6 @@
 [project]
 name = "dravik"
-version = "0.1"
+dynamic = ["version"]
 description = "Hledger TUI"
 license = { file = "LICENSE" }
 authors = [
@@ -37,14 +37,21 @@ dev = [
 ]
 
 [project.scripts]
-dravik = "dravik.__main__:run"
+dravik = "dravik.__main__:run_app"
+dravik-init = "dravik.__main__:create_configs"
 
 [project.urls]
 "Source" = "https://github.com/Yaser-Amiri/dravik"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"  # Use git for versioning
+
+[tool.hatch.version.raw-options]
+version_scheme = "no-guess-dev"
 
 [tool.hatch.metadata]
 allow-direct-references = true
