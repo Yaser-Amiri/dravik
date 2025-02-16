@@ -45,9 +45,9 @@ class AccountDetailsScreen(ModalScreen[None]):
             ]
         )
         with Vertical(id=self.ns("container")):
-            yield Label(f"Account Path: {self.account}", classes=self.ns("label"))
-            yield Label(f"Label: {label}", classes=self.ns("label"))
-            yield Label(f"Balance: {balance}", classes=self.ns("label"))
+            yield Label(Text(f"Account Path: {self.account}"), classes=self.ns("label"))
+            yield Label(Text(f"Label: {label}"), classes=self.ns("label"))
+            yield Label(Text(f"Balance: {balance}"), classes=self.ns("label"))
             with Vertical(id=self.ns("actions")):
                 yield Button("OK", variant="primary", id=self.ns("ok-btn"))
 
