@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from functools import partial
 from typing import Any, Callable
 from abc import abstractmethod
@@ -6,6 +6,7 @@ from abc import abstractmethod
 
 from rich.text import Text
 from textual.events import Resize
+from textual.binding import Binding
 from textual.app import ComposeResult
 from textual.screen import Screen, ModalScreen
 from textual.containers import (
@@ -250,13 +251,25 @@ class TransactionsScreen(Screen[None]):
     CSS_PATH = "../styles/transactions.tcss"
 
     BINDINGS = [
-        ("a", "focus_on_accounts_search_input", "Search Account"),
-        ("s", "focus_on_transaction_search_input", "Search Transaction"),
-        ("t", "focus_on_table", "Focus On Transactions Tabel"),
-        ("e", "focus_on_tree", "Focus On Accounts Tree"),
-        ("r", "request_refresh", "Refresh"),
-        ("escape", "focus_on_pane", "Unfocus"),
+        Binding("0", "clear_date_filters", "Clear Date Filters", show=False),
+        Binding("1", "filter_current_week", "Filter Current Week", show=False),
+        Binding("2", "filter_current_month", "Filter Current Month", show=False),
+        Binding("3", "filter_previous_week", "Filter Previous Week", show=False),
+        Binding("4", "filter_previous_month", "Filter Previous Month", show=False),
+        Binding("a", "focus_on_accounts_search_input", "Search Account"),
+        Binding("s", "focus_on_transaction_search_input", "Search Transaction"),
+        Binding("t", "focus_on_table", "Focus On Table"),
+        Binding("e", "focus_on_tree", "Focus On Tree"),
+        Binding("r", "request_refresh", "Refresh"),
+        Binding("escape", "focus_on_pane", "Unfocus"),
     ]
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.description_search_input: TransactionDescriptionSearch | None = None
+        self.from_date_input: TransactionFromDateSearch | None = None
+        self.to_date_input: TransactionToDateSearch | None = None
+        self.account_search_input: TransactionAccountSearch | None = None
+        super().__init__(*args, **kwargs)
 
     def action_request_refresh(self) -> None:
         self.app.push_screen(RefreshScreen())
@@ -270,7 +283,69 @@ class TransactionsScreen(Screen[None]):
     def show_transaction_details(self, transaction_id: str | None) -> None:
         self.app.push_screen(TransactionDetailsScreen(transaction_id))
 
+    def _set_date_filters(
+        self,
+        from_date: date | None = None,
+        to_date: date | None = None,
+    ) -> None:
+        if self.from_date_input is None or self.to_date_input is None:
+            return
+
+        self.from_date_input.clear()
+        self.to_date_input.clear()
+        if from_date is not None:
+            self.from_date_input.insert(str(from_date), 0)
+        if to_date is not None:
+            self.to_date_input.insert(str(to_date), 0)
+
+    def action_clear_date_filters(self) -> None:
+        self._set_date_filters(None, None)
+
+    def action_filter_current_week(self) -> None:
+        today = date.today()
+        start_of_week = today - timedelta(days=today.weekday())
+        end_of_week = start_of_week + timedelta(days=6)
+        self._set_date_filters(start_of_week, end_of_week)
+
+    def action_filter_current_month(self) -> None:
+        today = date.today()
+        start_of_month = today.replace(day=1)
+        next_month = today.replace(day=28) + timedelta(days=4)
+        end_of_month = next_month.replace(day=1) - timedelta(days=1)
+        self._set_date_filters(start_of_month, end_of_month)
+
+    def action_filter_previous_week(self) -> None:
+        today = date.today()
+        start_of_week = today - timedelta(days=today.weekday() + 7)
+        end_of_week = start_of_week + timedelta(days=6)
+        self._set_date_filters(start_of_week, end_of_week)
+
+    def action_filter_previous_month(self) -> None:
+        today = date.today()
+        first_of_this_month = today.replace(day=1)
+        last_of_previous_month = first_of_this_month - timedelta(days=1)
+        start_of_previous_month = last_of_previous_month.replace(day=1)
+        self._set_date_filters(start_of_previous_month, last_of_previous_month)
+
     def compose(self) -> ComposeResult:
+        self.description_search_input = TransactionDescriptionSearch(
+            on_submit=self._focus_on_table,
+            placeholder="...",
+            id=self.ns("description-search"),
+        )
+        self.from_date_input = TransactionFromDateSearch(
+            on_submit=self._focus_on_table,
+            placeholder="1970-01-01",
+        )
+        self.to_date_input = TransactionToDateSearch(
+            on_submit=self._focus_on_table,
+            placeholder="2040-12-31",
+        )
+        self.account_search_input = TransactionAccountSearch(
+            on_submit=self._focus_on_table,
+            placeholder="Path or Label",
+        )
+
         with VerticalScroll():
             yield Static("Dravik / Transactions", id=self.ns("header"))
             with ScrollableContainer(id=self.ns("grid")):
@@ -297,22 +372,10 @@ class TransactionsScreen(Screen[None]):
                         yield Label("Account:")
 
                     with Grid(id=self.ns("searchbar-inputs")):
-                        yield TransactionDescriptionSearch(
-                            on_submit=self._focus_on_table,
-                            placeholder="...",
-                            id=self.ns("description-search"),
-                        )
-                        yield TransactionFromDateSearch(
-                            on_submit=self._focus_on_table, placeholder="1970-01-01"
-                        )
-                        yield TransactionToDateSearch(
-                            on_submit=self._focus_on_table,
-                            placeholder="2040-12-31",
-                        )
-                        yield TransactionAccountSearch(
-                            on_submit=self._focus_on_table, placeholder="Path or Label"
-                        )
-
+                        yield self.description_search_input
+                        yield self.from_date_input
+                        yield self.to_date_input
+                        yield self.account_search_input
                     yield TransactionsTable(
                         self.show_transaction_details,
                         id=self.ns("dtble"),

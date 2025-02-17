@@ -175,7 +175,6 @@ class TransactionsTable(RichTable):
 
 
 class AccountsTree(Tree[str]):
-
     BINDINGS = [
         ("j", "cursor_down", "Cursor Up"),
         ("k", "cursor_up", "Cursor Down"),
