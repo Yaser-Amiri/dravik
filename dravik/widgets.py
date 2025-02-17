@@ -175,6 +175,12 @@ class TransactionsTable(RichTable):
 
 
 class AccountsTree(Tree[str]):
+
+    BINDINGS = [
+        ("j", "cursor_down", "Cursor Up"),
+        ("k", "cursor_up", "Cursor Down"),
+    ]
+
     def __init__(
         self,
         select_callback: Callable[[AccountPath], None],
