@@ -5,6 +5,7 @@ from typing import Any, TypedDict
 
 from rich.text import Text
 from textual.binding import Binding
+from textual.containers import VerticalScroll
 from textual.widgets import DataTable, Input, Label, Tree
 
 from dravik.models import (
@@ -294,3 +295,10 @@ class AccountPathInput(Input):
         if suggested := self._suggest_account(state, self.value):
             self.clear()
             self.insert(suggested, 0)
+
+
+class RichVerticalScroll(VerticalScroll):
+    BINDINGS = [
+        ("j", "scroll_down", "Scroll down"),
+        ("k", "scroll_up", "Scroll up"),
+    ]

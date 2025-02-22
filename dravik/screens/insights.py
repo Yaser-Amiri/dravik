@@ -6,8 +6,6 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import (
     Grid,
-    Vertical,
-    VerticalScroll,
 )
 from textual.screen import Screen
 from textual.widgets import Button, Footer, Input, Label, MaskedInput
@@ -16,7 +14,7 @@ from textual_plotext import PlotextPlot
 from dravik.models import AppState, InsightsFilters
 from dravik.utils import get_app_services, get_app_state, mutate_app_state
 from dravik.validators import Date, Integer
-from dravik.widgets import AccountPathInput
+from dravik.widgets import AccountPathInput, RichVerticalScroll
 
 
 def request_for_update_charts(app: App[object]) -> None:
@@ -76,7 +74,7 @@ class InsightsDepthInput(MaskedInput):
 
 class InsightsEtcThresholdInput(MaskedInput):
     def __init__(self, **kwargs: Any) -> None:
-        template = kwargs.pop("template", "9")
+        template = kwargs.pop("template", "00")
         validators = kwargs.pop("validators", []) + [Integer()]
         super().__init__(template=template, validators=validators, **kwargs)
 
@@ -196,12 +194,72 @@ class HistoricalBalance(Plot):
         )
 
 
+class BalanceChange(Plot):
+    def set_data(self, filters: InsightsFilters) -> None:
+        account = filters["account"] or "assets"
+        depth = filters["depth"] or 2
+        etc_threshold = filters["etc_threshold"] or 0
+        account_labels = get_app_state(self.app).account_labels
+
+        hledger = get_app_services(self.app).get_hledger()
+        hledger_result_per_account, hledger_result_total = (
+            hledger.get_balance_change_report(
+                account,
+                filters["from_date"] or datetime.now().date() - timedelta(days=30),
+                filters["to_date"] or datetime.now().date(),
+                depth,
+            )
+        )
+
+        plt = self.plt
+        plt.clear_data()
+        plt.clear_color()
+        plt.clear_terminal()
+        plt.clear_figure()
+        plt.theme("matrix")
+        plt.date_form("Y-m-d")
+
+        available_currencies = {
+            c for r in hledger_result_per_account.values() for c in r
+        }
+        inferred_currency = (
+            list(available_currencies)[0] if len(available_currencies) > 0 else ""
+        )
+        currency = filters["currency"] or inferred_currency
+
+        total_amount = hledger_result_total.get(currency, 0)
+
+        accounts = []
+        values = []
+        under_threshold_amount: float = 0
+        for account, holdings in hledger_result_per_account.items():
+            value = holdings.get(currency)
+            if value is None:
+                continue
+            if value / total_amount * 100 <= etc_threshold:
+                under_threshold_amount += value
+            else:
+                accounts.append(account_labels.get(account, account))
+                values.append(value)
+
+        if under_threshold_amount > 0:
+            accounts.append("Sum of Under Threshold")
+            values.append(under_threshold_amount)
+
+        plt.bar(accounts, values, orientation="horizontal")
+        plt.title(
+            f"Historical Balance / Account: {account} / "
+            f"Currency: {currency or 'Not Selected'} / "
+            f"Total: {total_amount}"
+        )
+
+
 class InsightsScreen(Screen[None]):
     CSS_PATH = "../styles/insights.tcss"
 
     BINDINGS = [
         Binding("s", "focus_on_filters", "Focus On Filters"),
-        Binding("escape", "focus_on_submit", "Focus On Submit"),
+        Binding("escape", "unfocus", "Unfocus"),
         Binding("0", "reset_date_filters", "Reset Date Filters", show=False),
         Binding("1", "filter_current_week", "Filter Current Week", show=False),
         Binding("2", "filter_current_month", "Filter Current Month", show=False),
@@ -236,41 +294,41 @@ class InsightsScreen(Screen[None]):
             placeholder="2040-12-31",
             value=today.strftime("%Y-%m-%d"),
         )
-        self.depth_input = InsightsDepthInput(placeholder="1", value="1")
+        self.depth_input = InsightsDepthInput(placeholder="3", value="3")
         self.currency_input = InsightsCurrencyInput(placeholder="EUR")
         self.etc_threshold = InsightsEtcThresholdInput(placeholder="5", value="5")
 
-        with VerticalScroll():
-            with Vertical(id=self.ns("container")):
-                with Grid(id=self.ns("searchbar-labels")):
-                    yield Label("Account:")
-                    yield Label("Currency:")
-                    yield Label("From Date:")
-                    yield Label("To Date:")
-                    yield Label("Depth:")
-                    yield Label("Etc Threshold:")
-                    yield Label("")
+        with RichVerticalScroll(id=self.ns("container")):
+            with Grid(id=self.ns("searchbar-labels")):
+                yield Label("Account:")
+                yield Label("Currency:")
+                yield Label("From Date:")
+                yield Label("To Date:")
+                yield Label("Depth:")
+                yield Label("Etc Threshold %:")
+                yield Label("")
 
-                with Grid(id=self.ns("searchbar-inputs")):
-                    yield self.account_input
-                    yield self.currency_input
-                    yield self.from_date_input
-                    yield self.to_date_input
-                    yield self.depth_input
-                    yield self.etc_threshold
-                    yield InsightsSubmitButton(
-                        "Submit Filters",
-                        variant="primary",
-                        id=self.ns("submit"),
-                    )
-                yield HistoricalBalance(id=self.ns("historical-balance-plot"))
+            with Grid(id=self.ns("searchbar-inputs")):
+                yield self.account_input
+                yield self.currency_input
+                yield self.from_date_input
+                yield self.to_date_input
+                yield self.depth_input
+                yield self.etc_threshold
+                yield InsightsSubmitButton(
+                    "Submit Filters",
+                    variant="primary",
+                    id=self.ns("submit"),
+                )
+            yield HistoricalBalance(id=self.ns("historical-balance-plot"))
+            yield BalanceChange(id=self.ns("balance-change-plot"))
         yield Footer()
 
     def action_focus_on_filters(self) -> None:
         self.query_one(f"#{self.ns('account-filter')}").focus()
 
-    def action_focus_on_submit(self) -> None:
-        self.query_one(f"#{self.ns('submit')}").focus()
+    def action_unfocus(self) -> None:
+        self.query_one(f"#{self.ns('container')}").focus()
 
     def on_mount(self) -> None:
         self.query_one(f"#{self.ns('submit')}").focus()
@@ -283,6 +341,7 @@ class InsightsScreen(Screen[None]):
         self.to_date_input.clear()
         self.from_date_input.insert(str(from_date), 0)
         self.to_date_input.insert(str(to_date), 0)
+        request_for_update_charts(self.app)
 
     def action_reset_date_filters(self) -> None:
         today = date.today()

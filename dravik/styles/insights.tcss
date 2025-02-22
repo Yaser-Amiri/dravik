@@ -21,13 +21,18 @@
 }
 
 #insights--container {
-  height: 100%;
   background: $panel;
   border: orange;
 }
 
 #insights--historical-balance-plot {
+  height: 80%;
   padding: 0 1 1 1;
+}
+
+#insights--balance-change-plot {
+  height: 80%;
+  padding: 0 1 0 1;
 }
 
 #insights--searchbar-inputs > InsightsSubmitButton {
