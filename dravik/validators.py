@@ -13,3 +13,12 @@ class Date(Validator):
         except (TypeError, ValueError):
             return self.failure("Not a valid date!")
         return self.success()
+
+
+class Integer(Validator):
+    def validate(self, value: str = "") -> ValidationResult:
+        if not value:
+            return self.success()
+        if not value.strip().isnumeric():
+            return self.failure("Not a valid integer!")
+        return self.success()

@@ -13,8 +13,6 @@ from dravik.utils import get_app_services, get_app_state
 class HelpScreen(Screen[None]):
     CSS_PATH = "../styles/help.tcss"
 
-    BINDINGS = [("q", "request_quit", "Quit")]
-
     def ns(self, name: str) -> str:
         return f"help--{name}"
 

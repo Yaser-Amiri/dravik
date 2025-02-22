@@ -3,7 +3,8 @@ from itertools import groupby
 from typing import Any, Callable, TypedDict
 
 from rich.text import Text
-from textual.widgets import Label, Tree, DataTable
+from textual.binding import Binding
+from textual.widgets import Input, Label, Tree, DataTable
 
 from dravik.models import (
     AccountPath,
@@ -265,3 +266,32 @@ class HoldingsLabel(Label):
                 self.update(f"{account_label} => {values}")
 
         self.watch(self.app, "state", _x)
+
+
+class AccountPathInput(Input):
+    BINDINGS = [
+        Binding("ctrl+y", "autocomplete", "Auto Complete"),
+    ]
+
+    def _suggest_account(self, state: AppState, word: str) -> AccountPath | None:
+        word_sub_count = word.count(":")
+        all_accounts: set[AccountPath] = set()
+        if word in all_accounts:
+            return word
+        for account in state.ledger_data.balances:
+            sa = account.split(":")
+            if len(sa) != word_sub_count + 1:
+                continue
+            all_accounts |= {":".join(sa[: i + 1]) for i in range(len(sa))}
+
+        g = {a for a in all_accounts if a.startswith(word)}
+        if len(g) == 1:
+            return list(g)[0]
+
+        return None
+
+    def action_autocomplete(self) -> None:
+        state = get_app_state(self.app)
+        if suggested := self._suggest_account(state, self.value):
+            self.clear()
+            self.insert(suggested, 0)

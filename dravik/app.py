@@ -4,7 +4,13 @@ from dravik.services import AppServices
 from textual.reactive import reactive
 from textual.app import App
 
-from dravik.screens import TransactionsScreen, HelpScreen, QuitScreen, ErrorScreen
+from dravik.screens import (
+    TransactionsScreen,
+    HelpScreen,
+    QuitScreen,
+    ErrorScreen,
+    InsightsScreen,
+)
 
 from dravik.models import AppState, LedgerSnapshot
 
@@ -21,6 +27,14 @@ EMPTY_STATE = AppState(
     currency_labels={},
     pinned_accounts=[],
     errors=[],
+    insights_filters={
+        "from_date": None,
+        "to_date": None,
+        "account": None,
+        "depth": None,
+        "etc_threshold": None,
+        "currency": None,
+    },
 )
 
 
@@ -29,11 +43,13 @@ class Dravik(App[None]):
     BINDINGS = [
         ("t", "switch_mode('transactions')", "Transactions"),
         ("h", "switch_mode('help')", "Help"),
+        ("i", "switch_mode('insights')", "Insights"),
         ("q", "request_quit", "Quit"),
     ]
     MODES = {
         "transactions": TransactionsScreen,
         "help": HelpScreen,
+        "insights": InsightsScreen,
         "error": ErrorScreen,
     }
 
@@ -50,15 +66,15 @@ class Dravik(App[None]):
         self.services = AppServices(self)
         super().__init__()
 
-    async def on_mount(self) -> None:
-        await self.services.create_configs()
+    def on_mount(self) -> None:
+        self.services.create_configs()
 
         try:
-            await self.services.initial_check()
+            self.services.initial_check()
         except Exception as e:
             self.state.errors = [e]
             self.switch_mode("error")
             return
 
-        self.state = await self.services.get_initial_state()
+        self.state = self.services.get_initial_state()
         self.switch_mode("transactions")

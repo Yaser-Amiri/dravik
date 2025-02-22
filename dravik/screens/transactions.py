@@ -19,7 +19,12 @@ from textual.widgets import Footer, Static, Input, Label, Button, MaskedInput
 
 from dravik.models import AccountPath, LedgerTransaction
 from dravik.utils import get_app_state, mutate_app_state
-from dravik.widgets import HoldingsLabel, TransactionsTable, AccountsTree
+from dravik.widgets import (
+    AccountPathInput,
+    HoldingsLabel,
+    TransactionsTable,
+    AccountsTree,
+)
 from dravik.validators import Date
 from dravik.screens.refresh import RefreshScreen
 
@@ -80,7 +85,8 @@ class TransactionDetailsScreen(ModalScreen[None]):
         with Vertical(id=self.ns("container")):
             count_str = "no" if count == 0 else str(count)
             yield Label(
-                f"There are {count_str} transactions with this ID ({self.transaction_id}).",
+                f"There are {count_str} transactions with this "
+                f"ID ({self.transaction_id}).",
                 classes=self.ns("label"),
             )
             with Vertical(id=self.ns("actions")):
@@ -103,7 +109,8 @@ class TransactionDetailsScreen(ModalScreen[None]):
                         Text(_posting_text_fmt(left, right, 50), style="#03AC13")
                     )
 
-                yield Label("\nTags:")
+                if tx.tags:
+                    yield Label("\nTags:")
                 for tag_key, tag_value in tx.tags.items():
                     yield Label(Text(f"{tag_key}: {tag_value}", style="#FF4500"))
 
@@ -131,6 +138,12 @@ class TransactionDetailsScreen(ModalScreen[None]):
 
 
 class AccountTreeSearch(Input):
+    def __init__(
+        self, on_submit: Callable[[], None] | None = None, **kwargs: Any
+    ) -> None:
+        self.on_submit = on_submit
+        super().__init__(**kwargs)
+
     def on_input_changed(self, e: Input.Changed) -> None:
         state = get_app_state(self.app)
         word = e.value.strip()
@@ -146,6 +159,10 @@ class AccountTreeSearch(Input):
 
         state.accounts_tree_filters = [_search_filter]
         mutate_app_state(self.app)
+
+    async def action_submit(self) -> None:
+        if self.on_submit:
+            self.on_submit()
 
 
 class TransactionBaseSearchInput(Input):
@@ -192,7 +209,7 @@ class TransactionDescriptionSearch(TransactionBaseSearchInput):
         return word.lower() in tx.description.lower()
 
 
-class TransactionAccountSearch(TransactionBaseSearchInput):
+class TransactionAccountSearch(AccountPathInput, TransactionBaseSearchInput):
     @property
     def filter_key(self) -> str:
         return "ACCOUNT"
@@ -353,6 +370,7 @@ class TransactionsScreen(Screen[None]):
                     yield AccountTreeSearch(
                         placeholder="Search account ...",
                         id=self.ns("accounts-tree-search"),
+                        on_submit=self.action_focus_on_tree,
                     )
                     yield AccountsTree(
                         self.show_account_details,

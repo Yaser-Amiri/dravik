@@ -1,21 +1,22 @@
+import subprocess
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, date, timedelta
 import json
-import asyncio
-from asyncio.subprocess import Process
 
 from dravik.models import (
+    AccountPath,
+    Currency,
     LedgerSnapshot,
     LedgerPosting,
     LedgerTransaction,
 )
 
 
-async def run_cmd(cmd: list[str]) -> Process:
-    return await asyncio.create_subprocess_exec(
-        *cmd,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
+def run_cmd(cmd: list[str]) -> subprocess.Popen[bytes]:
+    return subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
     )
 
 
@@ -40,6 +41,7 @@ class Hledger:
             *file_params,
             "bal",
             "-t",
+            "--no-elide",
             "-O",
             "json",
         ]
@@ -68,15 +70,52 @@ class Hledger:
             *strict_params,
         ]
 
-    async def read(self) -> LedgerSnapshot:
-        transaction_proc = await run_cmd(self.get_transaction_command())
-        balances_proc = await run_cmd(self.get_balances_command())
-        stats_proc = await run_cmd(self.get_stats_command())
-        transaction_result, balances_result, stats_result = await asyncio.gather(
-            transaction_proc.communicate(),
-            balances_proc.communicate(),
-            stats_proc.communicate(),
-        )
+    def get_historical_balance_command(
+        self, account: AccountPath, from_date: date, to_date: date
+    ) -> list[str]:
+        file_params = ["-f", self.ledger_file_path] if self.ledger_file_path else []
+        return [
+            "hledger",
+            *file_params,
+            "bal",
+            account,
+            "--historical",
+            "--daily",
+            "--begin",
+            from_date.strftime("%Y-%m-%d"),
+            "--end",
+            to_date.strftime("%Y-%m-%d"),
+            "-O",
+            "json",
+        ]
+
+    def get_balance_change_report_command(
+        self, account: AccountPath, from_date: date, to_date: date, depth: int = 2
+    ) -> list[str]:
+        file_params = ["-f", self.ledger_file_path] if self.ledger_file_path else []
+        return [
+            "hledger",
+            *file_params,
+            "bal",
+            "-E",
+            account,
+            "--begin",
+            from_date.strftime("%Y-%m-%d"),
+            "--end",
+            to_date.strftime("%Y-%m-%d"),
+            "--depth",
+            str(depth),
+            "-O",
+            "json",
+        ]
+
+    def read(self) -> LedgerSnapshot:
+        transaction_proc = run_cmd(self.get_transaction_command())
+        balances_proc = run_cmd(self.get_balances_command())
+        stats_proc = run_cmd(self.get_stats_command())
+        transaction_result = transaction_proc.communicate()
+        balances_result = balances_proc.communicate()
+        stats_result = stats_proc.communicate()
         if transaction_proc.returncode != 0:
             raise Exception(transaction_result[1].decode())
         if balances_proc.returncode != 0:
@@ -116,16 +155,65 @@ class Hledger:
             stats=stats_result[0].decode(),
         )
 
-    async def get_version(self) -> str:
-        proc = await run_cmd(self.get_version_command())
-        result = await proc.communicate()
+    def get_historical_balance_report(
+        self, account: AccountPath, from_date: date, to_date: date
+    ) -> dict[date, dict[Currency, float]]:
+        proc = run_cmd(
+            self.get_historical_balance_command(
+                account, from_date, to_date + timedelta(days=1)
+            )
+        )
+        cmd_result = proc.communicate()
+        if proc.returncode != 0:
+            raise Exception(cmd_result[1].decode())
+        parsed_stdout = json.loads(cmd_result[0].decode())
+        dates = [
+            datetime.strptime(x[0]["contents"], "%Y-%m-%d").date()
+            for x in parsed_stdout["prDates"]
+        ]
+
+        result: dict[date, dict[Currency, float]] = {}
+        for index, holdings in enumerate(parsed_stdout["prTotals"]["prrAmounts"]):
+            result[dates[index]] = dict(
+                [(y["acommodity"], y["aquantity"]["floatingPoint"]) for y in holdings]
+            )
+        return result
+
+    def get_balance_change_report(
+        self, account: AccountPath, from_date: date, to_date: date, depth: int = 2
+    ) -> tuple[dict[AccountPath, dict[Currency, float]], dict[Currency, float]]:
+        """
+        Returns a tuple, first member is per account balances and second is total
+        """
+        proc = run_cmd(
+            self.get_balance_change_report_command(
+                account, from_date, to_date + timedelta(days=1), depth
+            )
+        )
+        result = proc.communicate()
+        if proc.returncode != 0:
+            raise Exception(result[1].decode())
+        parsed_stdout = json.loads(result[0].decode())
+
+        per_account = {
+            bl[0]: {r["acommodity"]: r["aquantity"]["floatingPoint"] for r in bl[3]}
+            for bl in parsed_stdout[0]
+        }
+        total = {
+            r["acommodity"]: r["aquantity"]["floatingPoint"] for r in parsed_stdout[1]
+        }
+        return per_account, total
+
+    def get_version(self) -> str:
+        proc = run_cmd(self.get_version_command())
+        result = proc.communicate()
         if proc.returncode != 0:
             raise Exception(result[1].decode())
         return result[0].decode()
 
-    async def check(self, strict: bool = False) -> str:
-        proc = await run_cmd(self.get_check_command(strict))
-        result = await proc.communicate()
+    def check(self, strict: bool = False) -> str:
+        proc = run_cmd(self.get_check_command(strict))
+        result = proc.communicate()
         if proc.returncode != 0:
             raise Exception(result[1].decode())
         return result[0].decode()

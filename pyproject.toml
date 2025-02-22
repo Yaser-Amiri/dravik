@@ -12,6 +12,7 @@ keywords = ["python", "cli", "hledger", "python3", "UV", "textual", "terminal", 
 dependencies = [
     "pydantic>=2.10.6",
     "textual==1.0.0",
+    "textual-plotext>=1.0.1",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -81,3 +82,9 @@ exclude = [
 line-length = 88
 indent-width = 4
 target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E501"]
+
+[tool.ruff.lint.pycodestyle]
+ignore-overlong-task-comments = false

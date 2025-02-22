@@ -1,0 +1,35 @@
+#insights--header {
+  height: 1;
+  content-align: center middle;
+  background: $panel;
+}
+
+#insights--searchbar-inputs {
+  grid-size: 7 1;
+  margin-bottom: 1;
+  height: auto;
+}
+
+#insights--searchbar-labels {
+  grid-size: 7 1;
+  height: auto;
+  margin-bottom: 1;
+}
+
+#insights--searchbar-labels > Label {
+  padding-left: 1
+}
+
+#insights--container {
+  height: 100%;
+  background: $panel;
+  border: orange;
+}
+
+#insights--historical-balance-plot {
+  padding: 0 1 1 1;
+}
+
+#insights--searchbar-inputs > InsightsSubmitButton {
+  width: 95%;
+}

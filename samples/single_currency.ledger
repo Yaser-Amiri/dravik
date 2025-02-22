@@ -1,0 +1,83 @@
+; -*- hledger -*-
+
+account assets:bank:jpmorgan-chase
+account assets:bank:revolut
+account assets:cash
+account assets:receivable:jack
+account liabilities:credit-card
+account equity:opening/closing
+account expenses:housing:rent
+account expenses:food:groceries
+account expenses:food:restaurants
+account expenses:food:cafe
+account expenses:transport:city-pass
+account expenses:professional:software
+account expenses:financial:fees
+account income:salary:main
+account income:salary:freelance
+account income:tax-refunds
+
+2025-01-01 Opening balances
+    assets:bank:jpmorgan-chase           25000
+    assets:bank:revolut                   1000
+    assets:cash                            500
+    liabilities:credit-card            -100.00
+    equity:opening/closing
+
+2025-01-01 Get cash from ATM
+    assets:bank:jpmorgan-chase         -100.00
+    expenses:financial:fees                 10
+    assets:cash                             90
+
+2025-01-02 Restaurant
+    assets:bank:jpmorgan-chase          -50.00
+    expenses:food:restaurants
+
+2025-01-02 Groceries
+    assets:bank:jpmorgan-chase          -70.00
+    expenses:food:groceries
+
+2025-01-06 GCP Charge
+    assets:bank:revolut                     -40.00
+    expenses:professional:software
+
+2025-01-07 Credit card settlement
+    assets:bank:jpmorgan-chase            -100
+    liabilities:credit-card
+
+2025-01-08 Groceries
+    liabilities:credit-card          -30.00
+    expenses:food:groceries
+
+2025-01-08 Salary of Jan
+    assets:bank:jpmorgan-chase            8000
+    income:salary:main
+
+2025-01-08 Cafe
+    liabilities:credit-card          -35.00
+    expenses:food:cafe
+
+2025-01-11 Exchange Money
+    assets:bank:revolut             -300.00
+    expenses:financial:fees               5
+    assets:bank:revolut                 295
+
+2025-01-12 City Pass
+    assets:cash                           -30.00
+    expenses:transport:city-pass
+
+2025-02-02 Rent
+    assets:bank:jpmorgan-chase           -2000
+    expenses:housing:rent
+
+2025-02-02 Tax Refund
+    assets:bank:jpmorgan-chase            1000
+    income:tax-refunds
+
+2025-02-02 Groceries
+    liabilities:credit-card          -32.00
+    expenses:food:groceries
+
+2025-02-03 Groceries
+    assets:bank:jpmorgan-chase           -5000
+    assets:receivable:jack
