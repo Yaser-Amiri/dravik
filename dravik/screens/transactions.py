@@ -1,32 +1,32 @@
+from abc import abstractmethod
+from collections.abc import Callable
 from datetime import date, timedelta
 from functools import partial
-from typing import Any, Callable
-from abc import abstractmethod
-
+from typing import Any
 
 from rich.text import Text
-from textual.events import Resize
-from textual.binding import Binding
 from textual.app import ComposeResult
-from textual.screen import Screen, ModalScreen
+from textual.binding import Binding
 from textual.containers import (
     Grid,
+    ScrollableContainer,
     Vertical,
     VerticalScroll,
-    ScrollableContainer,
 )
-from textual.widgets import Footer, Static, Input, Label, Button, MaskedInput
+from textual.events import Resize
+from textual.screen import ModalScreen, Screen
+from textual.widgets import Button, Footer, Input, Label, MaskedInput, Static
 
 from dravik.models import AccountPath, LedgerTransaction
+from dravik.screens.refresh import RefreshScreen
 from dravik.utils import get_app_state, mutate_app_state
+from dravik.validators import Date
 from dravik.widgets import (
     AccountPathInput,
+    AccountsTree,
     HoldingsLabel,
     TransactionsTable,
-    AccountsTree,
 )
-from dravik.validators import Date
-from dravik.screens.refresh import RefreshScreen
 
 
 class AccountDetailsScreen(ModalScreen[None]):
@@ -99,7 +99,7 @@ class TransactionDetailsScreen(ModalScreen[None]):
 
         with Vertical(id=self.ns("container")):
             with Vertical(id=self.ns("postings")):
-                yield Label(f"{str(tx.date)}")
+                yield Label(f"{tx.date!s}")
                 yield Label(f"Description: {tx.description}")
                 yield Label("\nPostings:")
                 for posting in tx.postings:

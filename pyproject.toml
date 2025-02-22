@@ -84,7 +84,63 @@ indent-width = 4
 target-version = "py313"
 
 [tool.ruff.lint]
-select = ["E501"]
+select = [
+  "A",
+  "ASYNC",
+  "B",
+  "C4",
+  "C90",
+  "COM",
+  "DJ",
+  "E",
+  "ERA",
+  "EXE",
+  "F",
+  "FA",
+  "FLY",
+  "G",
+  "I",
+  "ICN",
+  "INP",
+  "INT",
+  "ISC",
+  "N",
+  "PD",
+  "PERF",
+  "PGH",
+  "PIE",
+  "PTH",
+  "PYI",
+  "Q",
+  "RET",
+  "RSE",
+  "S",
+  "SIM",
+  "SLF",
+  "SLOT",
+  "T10",
+  "T20",
+  "TCH",
+  "TID",
+  "UP",
+  "W",
+  "YTT",
+]
+ignore = [
+  "S603",
+  "A001",
+  "A002",
+  "COM812",
+  "SIM117",
+  "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+  "S101",   # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
+  "SIM102", # sometimes it's better to nest
+  "UP032",
+  "UP038",  # Checks for uses of isinstance/issubclass that take a tuple
+  # of types for comparison.
+  # Deactivated because it can make the code slow:
+  # https://github.com/astral-sh/ruff/issues/7871
+]
 
 [tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = false

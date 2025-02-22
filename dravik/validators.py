@@ -1,6 +1,6 @@
 from datetime import date
 
-from textual.validation import Validator, ValidationResult
+from textual.validation import ValidationResult, Validator
 
 
 class Date(Validator):

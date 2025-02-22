@@ -1,11 +1,11 @@
-from pathlib import Path
-import sys
 import importlib.metadata
+import sys
+from pathlib import Path
 
 from textual.app import ComposeResult
-from textual.screen import Screen
-from textual.widgets import Footer, Label, Static, Link
 from textual.containers import Vertical
+from textual.screen import Screen
+from textual.widgets import Footer, Label, Link, Static
 
 from dravik.utils import get_app_services, get_app_state
 
@@ -26,7 +26,6 @@ class HelpScreen(Screen[None]):
         app_authors = dist.metadata.get("Author-Email", "")
         app_urls = dist.metadata.get_all("Project-URL", [])
         services = get_app_services(self.app)
-        services.app.config_path
 
         yield Static(
             (

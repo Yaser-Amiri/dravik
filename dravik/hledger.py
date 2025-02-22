@@ -1,13 +1,13 @@
-import subprocess
-from uuid import uuid4
-from datetime import datetime, date, timedelta
 import json
+import subprocess
+from datetime import date, datetime, timedelta
+from uuid import uuid4
 
 from dravik.models import (
     AccountPath,
     Currency,
-    LedgerSnapshot,
     LedgerPosting,
+    LedgerSnapshot,
     LedgerTransaction,
 )
 
@@ -174,9 +174,9 @@ class Hledger:
 
         result: dict[date, dict[Currency, float]] = {}
         for index, holdings in enumerate(parsed_stdout["prTotals"]["prrAmounts"]):
-            result[dates[index]] = dict(
-                [(y["acommodity"], y["aquantity"]["floatingPoint"]) for y in holdings]
-            )
+            result[dates[index]] = {
+                y["acommodity"]: y["aquantity"]["floatingPoint"] for y in holdings
+            }
         return result
 
     def get_balance_change_report(

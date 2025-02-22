@@ -1,13 +1,13 @@
-from typing import Callable, TypeAlias, TypedDict
-from datetime import date
+from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import date
+from typing import TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
-AccountPath: TypeAlias = str
-AccountLabel: TypeAlias = str
-Currency: TypeAlias = str
+type AccountPath = str
+type AccountLabel = str
+type Currency = str
 
 
 @dataclass

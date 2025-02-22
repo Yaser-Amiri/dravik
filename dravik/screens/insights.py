@@ -1,24 +1,21 @@
-from datetime import date, datetime, timedelta
 from abc import abstractmethod
+from datetime import date, datetime, timedelta
 from typing import Any
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.events import Key, Resize
-from textual.screen import Screen
 from textual.containers import (
     Grid,
     Vertical,
     VerticalScroll,
 )
-from textual.widgets import Button, Footer, Static, Input, Label, MaskedInput
-
-from dravik.models import AccountPath, AppState, InsightsFilters
-from dravik.utils import get_app_services, get_app_state, mutate_app_state
-from dravik.validators import Date, Integer
-
+from textual.screen import Screen
+from textual.widgets import Button, Footer, Input, Label, MaskedInput
 from textual_plotext import PlotextPlot
 
+from dravik.models import AppState, InsightsFilters
+from dravik.utils import get_app_services, get_app_state, mutate_app_state
+from dravik.validators import Date, Integer
 from dravik.widgets import AccountPathInput
 
 

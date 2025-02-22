@@ -1,7 +1,7 @@
 from textual.app import ComposeResult
-from textual.screen import ModalScreen
-from textual.widgets import Label, Button
 from textual.containers import Horizontal, Vertical
+from textual.screen import ModalScreen
+from textual.widgets import Button, Label
 
 from dravik.utils import get_app_services, get_app_state
 

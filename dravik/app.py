@@ -1,19 +1,17 @@
 from pathlib import Path
 
-from dravik.services import AppServices
-from textual.reactive import reactive
 from textual.app import App
-
-from dravik.screens import (
-    TransactionsScreen,
-    HelpScreen,
-    QuitScreen,
-    ErrorScreen,
-    InsightsScreen,
-)
+from textual.reactive import reactive
 
 from dravik.models import AppState, LedgerSnapshot
-
+from dravik.screens import (
+    ErrorScreen,
+    HelpScreen,
+    InsightsScreen,
+    QuitScreen,
+    TransactionsScreen,
+)
+from dravik.services import AppServices
 
 EMPTY_STATE = AppState(
     accounts_tree_filters=[],

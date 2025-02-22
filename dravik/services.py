@@ -1,8 +1,7 @@
+import json
 from datetime import date
 from pathlib import Path
-import json
 from typing import Protocol
-
 
 from dravik.hledger import Hledger
 from dravik.models import AppState, Config, LedgerSnapshot
@@ -18,7 +17,7 @@ class AppServices:
         self.app = app
 
     def get_hledger(self, path: str | None = None) -> Hledger:
-        p = self.read_configs().ledger if not path else path
+        p = path if path else self.read_configs().ledger
         return Hledger(p)
 
     def get_initial_state(self) -> AppState:
@@ -46,16 +45,16 @@ class AppServices:
         return hledger.read()
 
     def read_configs(self) -> Config:
-        with open(self.app.config_path) as config_file:
+        with self.app.config_path.open("r") as config_file:
             return Config(**json.load(config_file))
 
     def create_configs(self) -> None:
         self.app.config_dir.mkdir(parents=True, exist_ok=True)
 
         if not self.app.config_path.exists():
-            with open(self.app.config_path, "w") as f:
+            with self.app.config_path.open("w") as f:
                 f.write(Config().model_dump_json(indent=4))
-                print(f"Wrote the config file on: {self.app.config_path}")
+                print(f"Wrote the config file on: {self.app.config_path}")  # noqa: T201
 
     def initial_check(self) -> None:
         configs = self.read_configs()

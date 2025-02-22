@@ -1,10 +1,10 @@
 from typing import cast
 
-from dravik.services import AppServices
 from textual.app import App
 from textual.reactive import reactive
 
 from dravik.models import AppState
+from dravik.services import AppServices
 
 # The whole thing is a workaround, since type of "self.app" in the
 # textual widgets is always "App[object]"

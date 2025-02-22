@@ -1,16 +1,17 @@
+from collections.abc import Callable
 from functools import partial
 from itertools import groupby
-from typing import Any, Callable, TypedDict
+from typing import Any, TypedDict
 
 from rich.text import Text
 from textual.binding import Binding
-from textual.widgets import Input, Label, Tree, DataTable
+from textual.widgets import DataTable, Input, Label, Tree
 
 from dravik.models import (
     AccountPath,
     AppState,
-    LedgerSnapshot,
     LedgerPosting,
+    LedgerSnapshot,
     LedgerTransaction,
 )
 from dravik.utils import get_app_state
@@ -83,10 +84,8 @@ class TransactionsTable(RichTable):
         text_lenght = max(
             [
                 len(
-                    (
-                        f"{account_labels.get(a.account, a.account)} {a.amount}"
-                        f"{currency_labels.get(a.currency, a.currency)}"
-                    )
+                    f"{account_labels.get(a.account, a.account)} {a.amount}"
+                    f"{currency_labels.get(a.currency, a.currency)}"
                 )
                 for a in data
             ]
@@ -125,7 +124,7 @@ class TransactionsTable(RichTable):
         transactions = [
             tx
             for tx in ledger_data.transactions
-            if all(map(lambda fn: fn(tx), filter_functions))
+            if all(fn(tx) for fn in filter_functions)
         ]
 
         ingoing_postings = [
@@ -205,7 +204,7 @@ class AccountsTree(Tree[str]):
             balances = [
                 (path, holdings)
                 for path, holdings in e.ledger_data.balances.items()
-                if all(map(lambda fn: fn(path), e.accounts_tree_filters))
+                if all(fn(path) for fn in e.accounts_tree_filters)
             ]
 
             # sort is important to make it DFS
