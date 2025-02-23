@@ -228,18 +228,18 @@ class BalanceChange(Plot):
         currency = filters["currency"] or inferred_currency
 
         total_amount = hledger_result_total.get(currency, 0)
+        under_threshold_amount: float = 0
 
         accounts = []
         values = []
-        under_threshold_amount: float = 0
-        for account, holdings in hledger_result_per_account.items():
+        for a, holdings in hledger_result_per_account.items():
             value = holdings.get(currency)
             if value is None:
                 continue
             if value / total_amount * 100 <= etc_threshold:
                 under_threshold_amount += value
             else:
-                accounts.append(account_labels.get(account, account))
+                accounts.append(account_labels.get(a, a))
                 values.append(value)
 
         if under_threshold_amount > 0:
