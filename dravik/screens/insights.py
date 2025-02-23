@@ -283,7 +283,7 @@ class InsightsScreen(Screen[None]):
         today = datetime.now()
         self.account_input = InsightsAccountInput(
             placeholder="Path",
-            value="assets",
+            value="expenses",
             id=self.ns("account-filter"),
         )
         self.from_date_input = InsightsFromDateInput(
