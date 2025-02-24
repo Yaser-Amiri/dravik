@@ -47,7 +47,7 @@ class TransactionsTable(RichTable):
         self.select_callback = select_callback
         self.cursor_type = "row"
         self.zebra_stripes = True
-        self.add_columns("Date", "Description", "Amount", "In-Goings", "Out-Goings")
+        self.add_columns("Date", "Description", "Amount",  "Out-Goings", "In-Goings")
 
     def on_data_table_row_selected(self, e: DataTable.RowSelected) -> None:
         id = e.row_key.value
@@ -154,8 +154,8 @@ class TransactionsTable(RichTable):
                         tx.description[:30]
                         + ("" if len(tx.description) <= 30 else " ✂"),
                         f"{total_tx_amount}",
-                        ingoing_postings_cell,
                         outgoing_postings_cell,
+                        ingoing_postings_cell,
                     ],
                     "key": tx.id,
                     "height": max(
