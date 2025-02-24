@@ -1,3 +1,4 @@
+import asyncio
 from abc import abstractmethod
 from datetime import date, datetime, timedelta
 from typing import Any
@@ -333,42 +334,45 @@ class InsightsScreen(Screen[None]):
     def on_mount(self) -> None:
         self.query_one(f"#{self.ns('submit')}").focus()
 
-    def _set_date_filters(self, from_date: date, to_date: date) -> None:
+    async def _set_date_filters(self, from_date: date, to_date: date) -> None:
         if self.from_date_input is None or self.to_date_input is None:
             return
 
-        self.from_date_input.clear()
-        self.to_date_input.clear()
         self.from_date_input.insert(str(from_date), 0)
         self.to_date_input.insert(str(to_date), 0)
+        # without the sleep, probably the filters (on state) are no updated yet
+        # this way I give the loop a chance to run the effects of inputs and then
+        # I request for updating the charts.
+        # This doesn't guarantee anything but solves the bug good enought for now.
+        await asyncio.sleep(0.01)
         request_for_update_charts(self.app)
 
-    def action_reset_date_filters(self) -> None:
+    async def action_reset_date_filters(self) -> None:
         today = date.today()
-        self._set_date_filters(today - timedelta(days=30), today)
+        await self._set_date_filters(today - timedelta(days=30), today)
 
-    def action_filter_current_week(self) -> None:
+    async def action_filter_current_week(self) -> None:
         today = date.today()
         start_of_week = today - timedelta(days=today.weekday())
         end_of_week = start_of_week + timedelta(days=6)
-        self._set_date_filters(start_of_week, end_of_week)
+        await self._set_date_filters(start_of_week, end_of_week)
 
-    def action_filter_current_month(self) -> None:
+    async def action_filter_current_month(self) -> None:
         today = date.today()
         start_of_month = today.replace(day=1)
         next_month = today.replace(day=28) + timedelta(days=4)
         end_of_month = next_month.replace(day=1) - timedelta(days=1)
-        self._set_date_filters(start_of_month, end_of_month)
+        await self._set_date_filters(start_of_month, end_of_month)
 
-    def action_filter_previous_week(self) -> None:
+    async def action_filter_previous_week(self) -> None:
         today = date.today()
         start_of_week = today - timedelta(days=today.weekday() + 7)
         end_of_week = start_of_week + timedelta(days=6)
-        self._set_date_filters(start_of_week, end_of_week)
+        await self._set_date_filters(start_of_week, end_of_week)
 
-    def action_filter_previous_month(self) -> None:
+    async def action_filter_previous_month(self) -> None:
         today = date.today()
         first_of_this_month = today.replace(day=1)
         last_of_previous_month = first_of_this_month - timedelta(days=1)
         start_of_previous_month = last_of_previous_month.replace(day=1)
-        self._set_date_filters(start_of_previous_month, last_of_previous_month)
+        await self._set_date_filters(start_of_previous_month, last_of_previous_month)
