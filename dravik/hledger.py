@@ -1,10 +1,13 @@
 import json
 import subprocess
 from datetime import date, datetime, timedelta
+from decimal import Decimal
+from typing import Any
 from uuid import uuid4
 
 from dravik.models import (
     AccountPath,
+    Amount,
     Currency,
     LedgerPosting,
     LedgerSnapshot,
@@ -18,6 +21,11 @@ def run_cmd(cmd: list[str]) -> subprocess.Popen[bytes]:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
+
+
+def parse_aquantity(r: Any) -> Amount:
+    # parsed json has type "Any"
+    return Decimal(r["decimalMantissa"]).scaleb(-r["decimalPlaces"])
 
 
 class Hledger:
@@ -127,7 +135,7 @@ class Hledger:
             bl["acommodity"] for bl in json.loads(balances_result[0].decode())[1]
         }
         balances = {
-            bl[0]: {r["acommodity"]: r["aquantity"]["floatingPoint"] for r in bl[3]}
+            bl[0]: {r["acommodity"]: parse_aquantity(r["aquantity"]) for r in bl[3]}
             for bl in json.loads(balances_result[0].decode())[0]
         }
         transactions: list[LedgerTransaction] = [
@@ -139,7 +147,7 @@ class Hledger:
                 postings=[
                     LedgerPosting(
                         account=posting["paccount"],
-                        amount=posting["pamount"][0]["aquantity"]["floatingPoint"],
+                        amount=parse_aquantity(posting["pamount"][0]["aquantity"]),
                         currency=posting["pamount"][0]["acommodity"],
                         comment=posting["pcomment"].strip(),
                     )
@@ -157,7 +165,7 @@ class Hledger:
 
     def get_historical_balance_report(
         self, account: AccountPath, from_date: date, to_date: date
-    ) -> dict[date, dict[Currency, float]]:
+    ) -> dict[date, dict[Currency, Amount]]:
         proc = run_cmd(
             self.get_historical_balance_command(
                 account, from_date, to_date + timedelta(days=1)
@@ -172,16 +180,16 @@ class Hledger:
             for x in parsed_stdout["prDates"]
         ]
 
-        result: dict[date, dict[Currency, float]] = {}
+        result: dict[date, dict[Currency, Amount]] = {}
         for index, holdings in enumerate(parsed_stdout["prTotals"]["prrAmounts"]):
             result[dates[index]] = {
-                y["acommodity"]: y["aquantity"]["floatingPoint"] for y in holdings
+                y["acommodity"]: parse_aquantity(y["aquantity"]) for y in holdings
             }
         return result
 
     def get_balance_change_report(
         self, account: AccountPath, from_date: date, to_date: date, depth: int = 2
-    ) -> tuple[dict[AccountPath, dict[Currency, float]], dict[Currency, float]]:
+    ) -> tuple[dict[AccountPath, dict[Currency, Amount]], dict[Currency, Amount]]:
         """
         Returns a tuple, first member is per account balances and second is total
         """
@@ -196,11 +204,11 @@ class Hledger:
         parsed_stdout = json.loads(result[0].decode())
 
         per_account = {
-            bl[0]: {r["acommodity"]: r["aquantity"]["floatingPoint"] for r in bl[3]}
+            bl[0]: {r["acommodity"]: parse_aquantity(r["aquantity"]) for r in bl[3]}
             for bl in parsed_stdout[0]
         }
         total = {
-            r["acommodity"]: r["aquantity"]["floatingPoint"] for r in parsed_stdout[1]
+            r["acommodity"]: parse_aquantity(r["aquantity"]) for r in parsed_stdout[1]
         }
         return per_account, total
 

@@ -186,7 +186,9 @@ class HistoricalBalance(Plot):
         values = []
         for d, v in hledger_result.items():
             dates.append(datetime.fromordinal(d.toordinal()).strftime("%Y-%m-%d"))
-            values.append(v.get(currency, 0.0))
+            values.append(
+                float(v.get(currency, 0))
+            )  # the chart lib doesn't accept decimal, just float
 
         plt.plot(dates, values)
         plt.title(
@@ -238,10 +240,12 @@ class BalanceChange(Plot):
             if value is None:
                 continue
             if value / total_amount * 100 <= etc_threshold:
-                under_threshold_amount += value
+                under_threshold_amount += float(value)
             else:
                 accounts.append(account_labels.get(a, a))
-                values.append(value)
+                values.append(
+                    float(value)
+                )  # the chart lib doesn't accept decimal, just float
 
         if under_threshold_amount > 0:
             accounts.append("Sum of Under Threshold")

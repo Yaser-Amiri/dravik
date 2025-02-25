@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
+from decimal import Decimal
 from typing import TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -8,12 +9,13 @@ from pydantic import BaseModel, ConfigDict, Field
 type AccountPath = str
 type AccountLabel = str
 type Currency = str
+type Amount = Decimal
 
 
 @dataclass
 class LedgerPosting:
     account: AccountPath
-    amount: float
+    amount: Amount
     currency: Currency
     comment: str
 
@@ -29,7 +31,7 @@ class LedgerTransaction:
 
 @dataclass
 class LedgerSnapshot:
-    balances: dict[AccountPath, dict[Currency, float]]
+    balances: dict[AccountPath, dict[Currency, Amount]]
     transactions: list[LedgerTransaction]
     commodities: set[Currency]
     stats: str | None = None
