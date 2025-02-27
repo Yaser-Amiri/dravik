@@ -13,7 +13,6 @@ from dravik.models import (
     AppState,
     LedgerPosting,
     LedgerSnapshot,
-    LedgerTransaction,
 )
 from dravik.utils import get_app_state
 
@@ -97,12 +96,12 @@ class TransactionsTable(RichTable):
             width = text_lenght
         return width
 
-    def _calculate_total_col_value(self, tx: LedgerTransaction) -> str:
+    def _calculate_total_col_value(self, postings: list[LedgerPosting]) -> str:
         """
         Calculates value of `total amount` column, returns string like `10 $\n20 EUR`
         """
         postings = sorted(
-            [p for p in tx.postings if p.amount >= 0], key=lambda x: x.currency
+            [p for p in postings if p.amount >= 0], key=lambda x: x.currency
         )
         currency_labels = get_app_state(self.app).currency_labels
 
@@ -138,7 +137,7 @@ class TransactionsTable(RichTable):
         outgoing_col_width = self._calculate_postings_col_width(outgoing_postings)
 
         for tx in sorted(transactions, key=lambda x: x.date, reverse=True):
-            total_tx_amount = self._calculate_total_col_value(tx)
+            total_tx_amount = self._calculate_total_col_value(tx.postings)
             ingoing_postings_cell = self._posting_cell_fmt(
                 [p for p in tx.postings if p.amount > 0],
                 ingoing_col_width,
@@ -166,6 +165,18 @@ class TransactionsTable(RichTable):
                     ),
                 }
             )
+
+        total_amount = self._calculate_total_col_value(
+            [p for tx in transactions for p in tx.postings]
+        )
+        rows.insert(
+            0,
+            {
+                "cells": ["", "T O T A L", total_amount, "", ""],
+                "key": "TOTAL",
+                "height": max(1, total_amount.count("\n")),
+            },
+        )
         return rows
 
     def on_mount(self) -> None:
