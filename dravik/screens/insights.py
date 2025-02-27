@@ -159,7 +159,7 @@ class Plot(PlotextPlot):
 
 class HistoricalBalance(Plot):
     def set_data(self, filters: InsightsFilters) -> None:
-        account = filters["account"] or "assets"
+        account = filters["account"] or "expenses"
 
         hledger = get_app_services(self.app).get_hledger()
         hledger_result = hledger.get_historical_balance_report(
@@ -199,7 +199,7 @@ class HistoricalBalance(Plot):
 
 class BalanceChange(Plot):
     def set_data(self, filters: InsightsFilters) -> None:
-        account = filters["account"] or "assets"
+        account = filters["account"] or "expenses"
         depth = filters["depth"] or 2
         etc_threshold = filters["etc_threshold"] or 0
         account_labels = get_app_state(self.app).account_labels
@@ -301,7 +301,7 @@ class InsightsScreen(Screen[None]):
         )
         self.depth_input = InsightsDepthInput(placeholder="3", value="3")
         self.currency_input = InsightsCurrencyInput(placeholder="EUR")
-        self.etc_threshold = InsightsEtcThresholdInput(placeholder="5", value="5")
+        self.etc_threshold = InsightsEtcThresholdInput(placeholder="1", value="1")
 
         with RichVerticalScroll(id=self.ns("container")):
             with Grid(id=self.ns("searchbar-labels")):
