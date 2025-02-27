@@ -161,7 +161,7 @@ class TransactionsTable(RichTable):
                         1,
                         str(outgoing_postings_cell).count("\n"),
                         str(ingoing_postings_cell).count("\n"),
-                        total_tx_amount.count("\n"),
+                        total_tx_amount.count("\n") + 1,
                     ),
                 }
             )
@@ -174,7 +174,7 @@ class TransactionsTable(RichTable):
             {
                 "cells": ["", "T O T A L", total_amount, "", ""],
                 "key": "TOTAL",
-                "height": max(1, total_amount.count("\n")),
+                "height": max(1, total_amount.count("\n") + 1),
             },
         )
         return rows
