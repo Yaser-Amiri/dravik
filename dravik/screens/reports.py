@@ -173,11 +173,14 @@ class ReportsScreen(Screen[None]):
         yield Static("Dravik / Reports", id=self.ns("header"))
         with Vertical(id=self.ns("container")):
             with Grid(id=self.ns("searchbar-labels")):
+                yield Label("")
                 yield Label("From Date:")
                 yield Label("To Date:")
                 yield Label("")
+                yield Label("")
 
             with Grid(id=self.ns("searchbar-inputs")):
+                yield Label("")
                 yield self.from_date_input
                 yield self.to_date_input
                 yield ReportsSubmitButton(
@@ -185,6 +188,7 @@ class ReportsScreen(Screen[None]):
                     variant="primary",
                     id=self.ns("submit"),
                 )
+                yield Label("")
 
             with Container(id=self.ns("tbl-container")):
                 yield ReportTable(id=self.ns("table"))

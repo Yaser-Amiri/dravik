@@ -5,12 +5,16 @@
 }
 
 #reports--searchbar-inputs {
-  grid-size: 4 1;
+  grid-size: 5 1;
   height: auto;
 }
 
+#reports--searchbar-inputs > ReportsSubmitButton {
+  width: 100%;
+}
+
 #reports--searchbar-labels {
-  grid-size: 4 1;
+  grid-size: 5 1;
   height: auto;
   margin-bottom: 1;
 }

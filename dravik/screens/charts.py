@@ -9,7 +9,7 @@ from textual.containers import (
     Grid,
 )
 from textual.screen import Screen
-from textual.widgets import Button, Footer, Input, Label, MaskedInput
+from textual.widgets import Button, Footer, Input, Label, MaskedInput, Static
 from textual_plotext import PlotextPlot
 
 from dravik.models import AppState, ChartsFilters
@@ -301,6 +301,7 @@ class ChartsScreen(Screen[None]):
         self.currency_input = ChartsCurrencyInput(placeholder="EUR")
         self.etc_threshold = ChartsEtcThresholdInput(placeholder="1", value="1")
 
+        yield Static("Dravik / Charts", id=self.ns("header"))
         with RichVerticalScroll(id=self.ns("container")):
             with Grid(id=self.ns("searchbar-labels")):
                 yield Label("Account:")
