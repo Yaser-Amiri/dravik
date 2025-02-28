@@ -2,6 +2,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
+from enum import StrEnum
 from typing import TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -20,9 +21,17 @@ class LedgerPosting:
     comment: str
 
 
+class TransactionStatus(StrEnum):
+    UNMARKED = "UNMARKED"
+    PENDING = "PENDING"
+    CLEARED = "CLEARED"
+
+
 @dataclass
 class LedgerTransaction:
     id: str
+    secondary_date: date | None
+    status: TransactionStatus
     date: date
     description: str
     postings: list[LedgerPosting]
@@ -37,13 +46,38 @@ class LedgerSnapshot:
     stats: str | None = None
 
 
-class InsightsFilters(TypedDict):
+class ReportType(StrEnum):
+    BALANCE_SHEET = "BALANCE_SHEET"
+    CASH_FLOW = "CASH_FLOW"
+    INCOME_STATEMENT = "INCOME_STATEMENT"
+
+
+@dataclass
+class ReportSectionResult:
+    title: str
+    per_account: dict[AccountPath, dict[Currency, Amount]]
+    total: dict[Currency, Amount]
+
+
+@dataclass
+class ReportResult:
+    title: str
+    sections: list[ReportSectionResult]
+    total: dict[Currency, Amount]
+
+
+class ChartsFilters(TypedDict):
     from_date: date | None
     to_date: date | None
     account: AccountPath | None
     currency: Currency | None
     depth: int | None
     etc_threshold: int | None
+
+
+class ReportsFilters(TypedDict):
+    from_date: date | None
+    to_date: date | None
 
 
 @dataclass
@@ -55,10 +89,13 @@ class AppState:
     currency_labels: dict[Currency, str]
     pinned_accounts: list[tuple[AccountPath, str]]
     errors: list[Exception]
-    # insights filters is not like other filters because the filtering doesn't happen
+    # charts filters is not like other filters because the filtering doesn't happen
     # in this process, we pass it directly to hledger
-    insights_filters: InsightsFilters
-    last_insights_request_time: float = 0
+    charts_filters: ChartsFilters
+    reports_filters: ReportsFilters
+    last_charts_request_time: float = 0
+    last_reports_request_time: float = 0
+    requested_report: ReportType = ReportType.BALANCE_SHEET
 
 
 class Config(BaseModel):

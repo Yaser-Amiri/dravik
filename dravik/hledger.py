@@ -12,6 +12,10 @@ from dravik.models import (
     LedgerPosting,
     LedgerSnapshot,
     LedgerTransaction,
+    ReportResult,
+    ReportSectionResult,
+    ReportType,
+    TransactionStatus,
 )
 
 
@@ -26,6 +30,13 @@ def run_cmd(cmd: list[str]) -> subprocess.Popen[bytes]:
 def parse_aquantity(r: Any) -> Amount:
     # parsed json has type "Any"
     return Decimal(r["decimalMantissa"]).scaleb(-r["decimalPlaces"])
+
+
+status_map = {
+    "Unmarked": TransactionStatus.UNMARKED,
+    "Cleared": TransactionStatus.CLEARED,
+    "Pending": TransactionStatus.PENDING,
+}
 
 
 class Hledger:
@@ -97,7 +108,7 @@ class Hledger:
             "json",
         ]
 
-    def get_balance_change_report_command(
+    def get_balance_change_command(
         self, account: AccountPath, from_date: date, to_date: date, depth: int = 2
     ) -> list[str]:
         file_params = ["-f", self.ledger_file_path] if self.ledger_file_path else []
@@ -113,6 +124,26 @@ class Hledger:
             to_date.strftime("%Y-%m-%d"),
             "--depth",
             str(depth),
+            "-O",
+            "json",
+        ]
+
+    def get_report_command(
+        self, report_type: ReportType, from_date: date, to_date: date
+    ) -> list[str]:
+        file_params = ["-f", self.ledger_file_path] if self.ledger_file_path else []
+        return [
+            "hledger",
+            *file_params,
+            {
+                ReportType.BALANCE_SHEET: "balancesheet",
+                ReportType.CASH_FLOW: "cashflow",
+                ReportType.INCOME_STATEMENT: "incomestatement",
+            }[report_type],
+            "--begin",
+            from_date.strftime("%Y-%m-%d"),
+            "--end",
+            to_date.strftime("%Y-%m-%d"),
             "-O",
             "json",
         ]
@@ -153,6 +184,10 @@ class Hledger:
                     )
                     for posting in tx["tpostings"]
                 ],
+                status=status_map[tx["tstatus"]],
+                secondary_date=datetime.strptime(tx["tdate2"], "%Y-%m-%d").date()
+                if tx["tdate2"]
+                else None,
             )
             for tx in json.loads(transaction_result[0].decode())
         ]
@@ -163,7 +198,7 @@ class Hledger:
             stats=stats_result[0].decode(),
         )
 
-    def get_historical_balance_report(
+    def get_historical_balance(
         self, account: AccountPath, from_date: date, to_date: date
     ) -> dict[date, dict[Currency, Amount]]:
         proc = run_cmd(
@@ -187,14 +222,14 @@ class Hledger:
             }
         return result
 
-    def get_balance_change_report(
+    def get_balance_change(
         self, account: AccountPath, from_date: date, to_date: date, depth: int = 2
     ) -> tuple[dict[AccountPath, dict[Currency, Amount]], dict[Currency, Amount]]:
         """
         Returns a tuple, first member is per account balances and second is total
         """
         proc = run_cmd(
-            self.get_balance_change_report_command(
+            self.get_balance_change_command(
                 account, from_date, to_date + timedelta(days=1), depth
             )
         )
@@ -211,6 +246,41 @@ class Hledger:
             r["acommodity"]: parse_aquantity(r["aquantity"]) for r in parsed_stdout[1]
         }
         return per_account, total
+
+    def get_report(
+        self, report_type: ReportType, from_date: date, to_date: date
+    ) -> ReportResult:
+        proc = run_cmd(
+            self.get_report_command(report_type, from_date, to_date + timedelta(days=1))
+        )
+        result = proc.communicate()
+        if proc.returncode != 0:
+            raise Exception(result[1].decode())
+        parsed_stdout = json.loads(result[0].decode())
+        title = parsed_stdout["cbrTitle"]
+        total = {
+            r["acommodity"]: parse_aquantity(r["aquantity"])
+            for r in parsed_stdout["cbrTotals"]["prrAmounts"][0]
+        }
+        per_account = [
+            ReportSectionResult(
+                title=s[0],
+                per_account={
+                    row["prrName"]: {
+                        r["acommodity"]: parse_aquantity(r["aquantity"])
+                        for r in row["prrTotal"]
+                    }
+                    for row in s[1]["prRows"]
+                },
+                total={
+                    r["acommodity"]: parse_aquantity(r["aquantity"])
+                    for amounts in s[1]["prTotals"]["prrAmounts"]
+                    for r in amounts
+                },
+            )
+            for s in parsed_stdout["cbrSubreports"]
+        ]
+        return ReportResult(title=title, total=total, sections=per_account)
 
     def get_version(self) -> str:
         proc = run_cmd(self.get_version_command())

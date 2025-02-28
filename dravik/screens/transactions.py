@@ -99,8 +99,11 @@ class TransactionDetailsScreen(ModalScreen[None]):
 
         with Vertical(id=self.ns("container")):
             with Vertical(id=self.ns("postings")):
-                yield Label(f"{tx.date!s}")
+                yield Label(f"Date: {tx.date!s}")
+                if tx.secondary_date:
+                    yield Label(f"Secondary Date: {tx.secondary_date!s}")
                 yield Label(f"Description: {tx.description}")
+                yield Label(f"Status: {tx.status.capitalize()}")
                 yield Label("\nPostings:")
                 for posting in tx.postings:
                     left = f"    {posting.account}:"

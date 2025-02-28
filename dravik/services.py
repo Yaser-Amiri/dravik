@@ -1,5 +1,4 @@
 import json
-from datetime import date
 from pathlib import Path
 from typing import Protocol
 
@@ -30,13 +29,17 @@ class AppServices:
             currency_labels=configs.currency_labels,
             pinned_accounts=[(a.account, a.color) for a in configs.pinned_accounts],
             errors=[],
-            insights_filters={
+            charts_filters={
                 "from_date": None,
                 "to_date": None,
                 "account": None,
                 "depth": None,
                 "etc_threshold": None,
                 "currency": None,
+            },
+            reports_filters={
+                "from_date": None,
+                "to_date": None,
             },
         )
 
@@ -61,6 +64,3 @@ class AppServices:
         hledger = Hledger(configs.ledger)
         hledger.get_version()
         hledger.check()
-        hledger.get_balance_change_report(
-            "expenses", date(2025, 2, 1), date(2025, 2, 20)
-        )

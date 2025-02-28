@@ -1,40 +1,40 @@
-#insights--header {
+#charts--header {
   height: 1;
   content-align: center middle;
   background: $panel;
 }
 
-#insights--searchbar-inputs {
+#charts--searchbar-inputs {
   grid-size: 7 1;
   margin-bottom: 1;
   height: auto;
 }
 
-#insights--searchbar-labels {
+#charts--searchbar-labels {
   grid-size: 7 1;
   height: auto;
   margin-bottom: 1;
 }
 
-#insights--searchbar-labels > Label {
+#charts--searchbar-labels > Label {
   padding-left: 1
 }
 
-#insights--container {
+#charts--container {
   background: $panel;
   border: orange;
 }
 
-#insights--historical-balance-plot {
+#charts--historical-balance-plot {
   height: 80%;
   padding: 0 1 1 1;
 }
 
-#insights--balance-change-plot {
+#charts--balance-change-plot {
   height: 80%;
   padding: 0 1 0 1;
 }
 
-#insights--searchbar-inputs > InsightsSubmitButton {
+#charts--searchbar-inputs > ChartsSubmitButton {
   width: 95%;
 }

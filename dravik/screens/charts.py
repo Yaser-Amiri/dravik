@@ -12,7 +12,7 @@ from textual.screen import Screen
 from textual.widgets import Button, Footer, Input, Label, MaskedInput
 from textual_plotext import PlotextPlot
 
-from dravik.models import AppState, InsightsFilters
+from dravik.models import AppState, ChartsFilters
 from dravik.utils import get_app_services, get_app_state, mutate_app_state
 from dravik.validators import Date, Integer
 from dravik.widgets import AccountPathInput, RichVerticalScroll
@@ -20,38 +20,38 @@ from dravik.widgets import AccountPathInput, RichVerticalScroll
 
 def request_for_update_charts(app: App[object]) -> None:
     state = get_app_state(app)
-    state.last_insights_request_time = datetime.now().timestamp()
+    state.last_charts_request_time = datetime.now().timestamp()
     mutate_app_state(app)
 
 
-class InsightsSubmitButton(Button):
+class ChartsSubmitButton(Button):
     def on_button_pressed(self) -> None:
         request_for_update_charts(self.app)
 
 
-class InsightsAccountInput(AccountPathInput):
+class ChartsAccountInput(AccountPathInput):
     def on_input_changed(self, e: Input.Changed) -> None:
         state = get_app_state(self.app)
         word = e.value.strip()
-        state.insights_filters["account"] = word or None
+        state.charts_filters["account"] = word or None
         mutate_app_state(self.app)
 
     async def action_submit(self) -> None:
         request_for_update_charts(self.app)
 
 
-class InsightsCurrencyInput(Input):
+class ChartsCurrencyInput(Input):
     def on_input_changed(self, e: Input.Changed) -> None:
         state = get_app_state(self.app)
         word = e.value.strip()
-        state.insights_filters["currency"] = word or None
+        state.charts_filters["currency"] = word or None
         mutate_app_state(self.app)
 
     async def action_submit(self) -> None:
         request_for_update_charts(self.app)
 
 
-class InsightsDepthInput(MaskedInput):
+class ChartsDepthInput(MaskedInput):
     def __init__(self, **kwargs: Any) -> None:
         template = kwargs.pop("template", "0")
         validators = kwargs.pop("validators", []) + [Integer()]
@@ -69,11 +69,11 @@ class InsightsDepthInput(MaskedInput):
         except (TypeError, ValueError):
             filter_value = None
 
-        state.insights_filters["depth"] = filter_value
+        state.charts_filters["depth"] = filter_value
         mutate_app_state(self.app)
 
 
-class InsightsEtcThresholdInput(MaskedInput):
+class ChartsEtcThresholdInput(MaskedInput):
     def __init__(self, **kwargs: Any) -> None:
         template = kwargs.pop("template", "00")
         validators = kwargs.pop("validators", []) + [Integer()]
@@ -91,11 +91,11 @@ class InsightsEtcThresholdInput(MaskedInput):
         except (TypeError, ValueError):
             filter_value = None
 
-        state.insights_filters["etc_threshold"] = filter_value
+        state.charts_filters["etc_threshold"] = filter_value
         mutate_app_state(self.app)
 
 
-class InsightsFromDateInput(MaskedInput):
+class ChartsFromDateInput(MaskedInput):
     def __init__(self, **kwargs: Any) -> None:
         template = kwargs.pop("template", "9999-99-99")
         validators = kwargs.pop("validators", []) + [Date()]
@@ -112,11 +112,11 @@ class InsightsFromDateInput(MaskedInput):
         except (TypeError, ValueError):
             filter_value = None
 
-        state.insights_filters["from_date"] = filter_value
+        state.charts_filters["from_date"] = filter_value
         mutate_app_state(self.app)
 
 
-class InsightsToDateInput(MaskedInput):
+class ChartsToDateInput(MaskedInput):
     def __init__(self, **kwargs: Any) -> None:
         template = kwargs.pop("template", "9999-99-99")
         validators = kwargs.pop("validators", []) + [Date()]
@@ -133,36 +133,36 @@ class InsightsToDateInput(MaskedInput):
         except (TypeError, ValueError):
             filter_value = None
 
-        state.insights_filters["to_date"] = filter_value
+        state.charts_filters["to_date"] = filter_value
         mutate_app_state(self.app)
 
 
 class Plot(PlotextPlot):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.last_insights_request_time: float = -1
+        self.last_charts_request_time: float = -1
 
     def on_mount(self) -> None:
         def _x(s: AppState) -> None:
-            if self.last_insights_request_time == s.last_insights_request_time:
+            if self.last_charts_request_time == s.last_charts_request_time:
                 return
-            self.last_insights_request_time = s.last_insights_request_time
-            self.set_data(s.insights_filters)
+            self.last_charts_request_time = s.last_charts_request_time
+            self.set_data(s.charts_filters)
             self.refresh(layout=True)
 
         self.watch(self.app, "state", _x)
 
     @abstractmethod
-    def set_data(self, filters: InsightsFilters) -> None:
+    def set_data(self, filters: ChartsFilters) -> None:
         pass
 
 
 class HistoricalBalance(Plot):
-    def set_data(self, filters: InsightsFilters) -> None:
+    def set_data(self, filters: ChartsFilters) -> None:
         account = filters["account"] or "expenses"
 
         hledger = get_app_services(self.app).get_hledger()
-        hledger_result = hledger.get_historical_balance_report(
+        hledger_result = hledger.get_historical_balance(
             account,
             filters["from_date"] or datetime.now().date() - timedelta(days=30),
             filters["to_date"] or datetime.now().date(),
@@ -198,20 +198,18 @@ class HistoricalBalance(Plot):
 
 
 class BalanceChange(Plot):
-    def set_data(self, filters: InsightsFilters) -> None:
+    def set_data(self, filters: ChartsFilters) -> None:
         account = filters["account"] or "expenses"
         depth = filters["depth"] or 2
         etc_threshold = filters["etc_threshold"] or 0
         account_labels = get_app_state(self.app).account_labels
 
         hledger = get_app_services(self.app).get_hledger()
-        hledger_result_per_account, hledger_result_total = (
-            hledger.get_balance_change_report(
-                account,
-                filters["from_date"] or datetime.now().date() - timedelta(days=30),
-                filters["to_date"] or datetime.now().date(),
-                depth,
-            )
+        hledger_result_per_account, hledger_result_total = hledger.get_balance_change(
+            account,
+            filters["from_date"] or datetime.now().date() - timedelta(days=30),
+            filters["to_date"] or datetime.now().date(),
+            depth,
         )
 
         plt = self.plt
@@ -259,8 +257,8 @@ class BalanceChange(Plot):
         )
 
 
-class InsightsScreen(Screen[None]):
-    CSS_PATH = "../styles/insights.tcss"
+class ChartsScreen(Screen[None]):
+    CSS_PATH = "../styles/charts.tcss"
 
     BINDINGS = [
         Binding("s", "focus_on_filters", "Focus On Filters"),
@@ -273,35 +271,35 @@ class InsightsScreen(Screen[None]):
     ]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self.from_date_input: InsightsFromDateInput | None
-        self.to_date_input: InsightsToDateInput | None
-        self.account_input: InsightsAccountInput | None
-        self.depth_input: InsightsDepthInput | None
-        self.currency_input: InsightsCurrencyInput | None
-        self.etc_threshold: InsightsEtcThresholdInput | None
+        self.from_date_input: ChartsFromDateInput | None
+        self.to_date_input: ChartsToDateInput | None
+        self.account_input: ChartsAccountInput | None
+        self.depth_input: ChartsDepthInput | None
+        self.currency_input: ChartsCurrencyInput | None
+        self.etc_threshold: ChartsEtcThresholdInput | None
         super().__init__(*args, **kwargs)
 
     def ns(self, name: str) -> str:
-        return f"insights--{name}"
+        return f"charts--{name}"
 
     def compose(self) -> ComposeResult:
         today = datetime.now()
-        self.account_input = InsightsAccountInput(
+        self.account_input = ChartsAccountInput(
             placeholder="Path",
             value="expenses",
             id=self.ns("account-filter"),
         )
-        self.from_date_input = InsightsFromDateInput(
+        self.from_date_input = ChartsFromDateInput(
             placeholder="1970-01-01",
             value=(today - timedelta(days=30)).strftime("%Y-%m-%d"),
         )
-        self.to_date_input = InsightsToDateInput(
+        self.to_date_input = ChartsToDateInput(
             placeholder="2040-12-31",
             value=today.strftime("%Y-%m-%d"),
         )
-        self.depth_input = InsightsDepthInput(placeholder="3", value="3")
-        self.currency_input = InsightsCurrencyInput(placeholder="EUR")
-        self.etc_threshold = InsightsEtcThresholdInput(placeholder="1", value="1")
+        self.depth_input = ChartsDepthInput(placeholder="3", value="3")
+        self.currency_input = ChartsCurrencyInput(placeholder="EUR")
+        self.etc_threshold = ChartsEtcThresholdInput(placeholder="1", value="1")
 
         with RichVerticalScroll(id=self.ns("container")):
             with Grid(id=self.ns("searchbar-labels")):
@@ -320,7 +318,7 @@ class InsightsScreen(Screen[None]):
                 yield self.to_date_input
                 yield self.depth_input
                 yield self.etc_threshold
-                yield InsightsSubmitButton(
+                yield ChartsSubmitButton(
                     "Submit Filters",
                     variant="primary",
                     id=self.ns("submit"),

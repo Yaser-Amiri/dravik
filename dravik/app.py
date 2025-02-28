@@ -5,10 +5,11 @@ from textual.reactive import reactive
 
 from dravik.models import AppState, LedgerSnapshot
 from dravik.screens import (
+    ChartsScreen,
     ErrorScreen,
     HelpScreen,
-    InsightsScreen,
     QuitScreen,
+    ReportsScreen,
     TransactionsScreen,
 )
 from dravik.services import AppServices
@@ -25,13 +26,17 @@ EMPTY_STATE = AppState(
     currency_labels={},
     pinned_accounts=[],
     errors=[],
-    insights_filters={
+    charts_filters={
         "from_date": None,
         "to_date": None,
         "account": None,
         "depth": None,
         "etc_threshold": None,
         "currency": None,
+    },
+    reports_filters={
+        "from_date": None,
+        "to_date": None,
     },
 )
 
@@ -41,13 +46,15 @@ class Dravik(App[None]):
     BINDINGS = [
         ("t", "switch_mode('transactions')", "Transactions"),
         ("h", "switch_mode('help')", "Help"),
-        ("i", "switch_mode('insights')", "Insights"),
+        ("c", "switch_mode('charts')", "Charts"),
+        ("p", "switch_mode('reports')", "Reports"),
         ("q", "request_quit", "Quit"),
     ]
     MODES = {
         "transactions": TransactionsScreen,
         "help": HelpScreen,
-        "insights": InsightsScreen,
+        "charts": ChartsScreen,
+        "reports": ReportsScreen,
         "error": ErrorScreen,
     }
 
