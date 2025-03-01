@@ -41,7 +41,6 @@ console-x:
 >	uv run textual console -x SYSTEM -x EVENT -x DEBUG -x INFO
 .PHONY: console-x
 
-
 lint:
 >	uv run ruff format
 >	uv run ruff check --fix
@@ -55,3 +54,7 @@ build:
 >	rm -rf dist
 >	uv build
 .PHONY: build
+
+publish:
+>	uv publish -t $(PYPI_TOKEN)
+.PHONY: publish
