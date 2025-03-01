@@ -55,3 +55,7 @@ build:
 >	rm -rf dist
 >	uv build
 .PHONY: build
+
+publish:
+>	uv publish -t $(PYPI_TOKEN)
+.PHONY: publish
