@@ -45,7 +45,7 @@ class Dravik(App[None]):
     CSS_PATH = "styles/main.tcss"
     BINDINGS = [
         ("t", "switch_mode('transactions')", "Transactions"),
-        ("h", "switch_mode('help')", "Help"),
+        ("\\", "switch_mode('help')", "Help"),
         ("c", "switch_mode('charts')", "Charts"),
         ("p", "switch_mode('reports')", "Reports"),
         ("q", "request_quit", "Quit"),
