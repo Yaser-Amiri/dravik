@@ -19,8 +19,10 @@ from dravik.utils import get_app_state
 
 class RichTable(DataTable[str | Text]):
     BINDINGS = [
-        ("j", "cursor_down", "Down"),
-        ("k", "cursor_up", "Up"),
+        Binding("j", "cursor_down", "Down", show=False),
+        Binding("k", "cursor_up", "Up", show=False),
+        Binding("l", "cursor_right", "Right", show=False),
+        Binding("h", "cursor_left", "Left", show=False),
     ]
 
     class IngestableDataRow(TypedDict):
