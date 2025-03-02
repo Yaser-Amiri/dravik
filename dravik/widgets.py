@@ -13,15 +13,14 @@ from dravik.models import (
     AppState,
     LedgerPosting,
     LedgerSnapshot,
-    TransactionStatus,
 )
 from dravik.utils import get_app_state
 
 
 class RichTable(DataTable[str | Text]):
     BINDINGS = [
-        ("j", "cursor_down", "Move down"),
-        ("k", "cursor_up", "Move up"),
+        ("j", "cursor_down", "Down"),
+        ("k", "cursor_up", "Up"),
     ]
 
     class IngestableDataRow(TypedDict):
@@ -40,12 +39,6 @@ class TransactionsTable(RichTable):
     A table that shows list of ledger transactions and reads it from state of the app.
     """
 
-    transaction_status_map = {
-        TransactionStatus.CLEARED: "*",
-        TransactionStatus.PENDING: "!",
-        TransactionStatus.UNMARKED: "",
-    }
-
     def __init__(
         self, select_callback: Callable[[str | None], None], *args: Any, **kwargs: Any
     ) -> None:
@@ -53,9 +46,7 @@ class TransactionsTable(RichTable):
         self.select_callback = select_callback
         self.cursor_type = "row"
         self.zebra_stripes = True
-        self.add_columns(
-            "Date", "S", "Description", "Amount", "Out-Goings", "In-Goings"
-        )
+        self.add_columns("Date", "Description", "Amount", "Out-Goings", "In-Goings")
 
     def on_data_table_row_selected(self, e: DataTable.RowSelected) -> None:
         id = e.row_key.value
@@ -159,7 +150,6 @@ class TransactionsTable(RichTable):
                 {
                     "cells": [
                         str(tx.date),
-                        self.transaction_status_map.get(tx.status, ""),
                         tx.description[:30]
                         + ("" if len(tx.description) <= 30 else " ✂"),
                         f"{total_tx_amount}",
@@ -182,7 +172,7 @@ class TransactionsTable(RichTable):
         rows.insert(
             0,
             {
-                "cells": ["", "", "T O T A L", total_amount, "", ""],
+                "cells": ["", "T O T A L", total_amount, "", ""],
                 "key": "TOTAL",
                 "height": max(1, total_amount.count("\n") + 1),
             },
