@@ -80,10 +80,9 @@ class TransactionsTable(RichTable):
         """
         Calculates width of a cell that should contain postings
         """
-        width = 10  # default
         account_labels = get_app_state(self.app).account_labels
         currency_labels = get_app_state(self.app).currency_labels
-        text_lenght = max(
+        return max(
             [
                 len(
                     f"{account_labels.get(a.account, a.account)} {a.amount}"
@@ -91,12 +90,8 @@ class TransactionsTable(RichTable):
                 )
                 for a in data
             ]
-            + [0],
-            default=width,
+            + [10],  # default size
         )
-        if text_lenght > width:
-            width = text_lenght
-        return width
 
     def _calculate_total_col_value(self, postings: list[LedgerPosting]) -> str:
         """
