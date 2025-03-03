@@ -21,6 +21,7 @@ account income:salary:main
 account income:salary:freelance
 account income:tax-refunds
 
+
 2025-01-01 Opening balances
     assets:bank:jpmorgan-chase       25000 USD
     assets:bank:revolut               1000 EUR
@@ -48,43 +49,359 @@ account income:tax-refunds
     expenses:professional:software
 
 2025-01-07 Credit card settlement
-    assets:bank:jpmorgan-chase        -100 USD
+    assets:bank:jpmorgan-chase       -100.00 USD
     liabilities:credit-card
 
-2025-01-08 Groceries
-    liabilities:credit-card      -30.00 USD
+2025-01-08 Groceries (credit card)
+    liabilities:credit-card       -30.00 USD
     expenses:food:groceries
 
 2025-01-08 Salary of Jan
-    assets:bank:jpmorgan-chase        8000 USD
+    assets:bank:jpmorgan-chase       8000.00 USD
     income:salary:main
 
 2025-01-08 Cafe
-    liabilities:credit-card      -35.00 USD
+    liabilities:credit-card       -35.00 USD
     expenses:food:cafe
 
 2025-01-11 Exchange Money
     assets:bank:revolut         -300.00 EUR
     expenses:financial:fees           5 EUR
-    assets:bank:revolut             330 USD
+    assets:bank:revolut             330.00 USD
     equity:conversion
 
 2025-01-12 City Pass
     assets:cash                       -30.00 USD
     expenses:transport:city-pass
 
+2025-01-15 Freelance Income
+    assets:bank:jpmorgan-chase       2000.00 USD
+    income:salary:freelance
+
+2025-01-16 Restaurant Dinner
+    assets:bank:jpmorgan-chase       -60.00 USD
+    expenses:food:restaurants
+
+2025-01-17 Groceries at Supermarket
+    assets:bank:jpmorgan-chase       -80.00 USD
+    expenses:food:groceries
+
+2025-01-18 Cafe Meeting
+    liabilities:credit-card       -25.00 USD
+    expenses:food:cafe
+
+2025-01-19 City Transit
+    assets:cash                      -20.00 USD
+    expenses:transport:city-pass
+
+2025-01-20 GCP Extra Charge
+    assets:bank:revolut                -50.00 EUR
+    expenses:professional:software
+
+2025-01-21 ATM Withdrawal 2
+    assets:bank:jpmorgan-chase     -205.00 USD
+    assets:cash                     200.00 USD
+    expenses:financial:fees              5 USD
+
+2025-01-22 Cash Deposit
+    assets:bank:jpmorgan-chase       150.00 USD
+    assets:cash         -150.00 USD
+
+2025-01-23 Restaurant Lunch
+    assets:bank:jpmorgan-chase       -45.00 USD
+    expenses:food:restaurants
+
+2025-01-24 Grocery Market
+    liabilities:credit-card       -90.00 USD
+    expenses:food:groceries
+
+2025-01-26 Bonus Income
+    assets:bank:revolut         1200.00 EUR
+    income:salary:freelance
+
+2025-01-27 Online Subscription
+    assets:bank:revolut          -15.00 EUR
+    expenses:professional:software
+
+2025-01-28 Grocery Store
+    liabilities:credit-card        -45.00 USD
+    expenses:food:groceries
+
+2025-01-29 Dinner Out
+    assets:bank:jpmorgan-chase       -70.00 USD
+    expenses:food:restaurants
+
+2025-01-29 Coffee Break
+    assets:cash          -10.00 USD
+    expenses:food:cafe
+
+2025-01-30 Credit Card Payment
+    assets:bank:jpmorgan-chase      -100.00 USD
+    liabilities:credit-card
+
+2025-01-31 Fuel
+    assets:bank:jpmorgan-chase       -40.00 USD
+    expenses:transport:city-pass
+
+2025-01-31 Late Night Snack
+    assets:cash           -8.00 USD
+    expenses:food:restaurants
+
+2025-01-31 Misc Purchase
+    assets:bank:jpmorgan-chase       -30.00 USD
+    expenses:food:cafe
+
 2025-02-02 Rent
-    assets:bank:jpmorgan-chase       -2000 USD
+    assets:bank:jpmorgan-chase      -2000.00 USD
     expenses:housing:rent
 
 2025-02-02 Tax Refund
-    assets:bank:jpmorgan-chase        1000 USD
+    assets:bank:jpmorgan-chase       1000.00 USD
     income:tax-refunds
 
 2025-02-02 Groceries
-    liabilities:credit-card      -32.00 USD
+    liabilities:credit-card        -32.00 USD
     expenses:food:groceries
 
-2025-02-03 Groceries
-    assets:bank:jpmorgan-chase       -5000 USD
+2025-02-03 Groceries (Receivable)
+    assets:bank:jpmorgan-chase      -5000.00 USD
     assets:receivable:jack
+
+2025-02-05 Salary Payment
+    assets:bank:jpmorgan-chase       8000.00 USD
+    income:salary:main
+
+2025-02-06 Freelance Income
+    assets:bank:jpmorgan-chase       2500.00 USD
+    income:salary:freelance
+
+2025-02-07 Restaurant
+    assets:bank:jpmorgan-chase       -55.00 USD
+    expenses:food:restaurants
+
+2025-02-07 Groceries
+    assets:bank:jpmorgan-chase       -85.00 USD
+    expenses:food:groceries
+
+2025-02-08 Cafe
+    liabilities:credit-card        -20.00 USD
+    expenses:food:cafe
+
+2025-02-09 ATM Withdrawal
+    assets:bank:jpmorgan-chase     -120.00 USD
+    expenses:financial:fees          3.00 USD
+    assets:cash                    117.00 USD
+
+2025-02-10 Exchange Money
+    assets:bank:revolut         -250.00 EUR
+    expenses:financial:fees          4.00 EUR
+    assets:bank:revolut          260.00 USD
+    equity:conversion
+
+2025-02-11 Bus Pass
+    assets:cash                     -25.00 USD
+    expenses:transport:city-pass
+
+2025-02-12 Restaurant Lunch
+    assets:bank:jpmorgan-chase       -65.00 USD
+    expenses:food:restaurants
+
+2025-02-13 Groceries
+    liabilities:credit-card        -50.00 USD
+    expenses:food:groceries
+
+2025-02-14 Cafe Break
+    assets:cash                     -12.00 USD
+    expenses:food:cafe
+
+2025-02-15 GCP Charge
+    assets:bank:revolut          -35.00 EUR
+    expenses:professional:software
+
+2025-02-16 Freelance Payment
+    assets:bank:jpmorgan-chase       3000.00 USD
+    income:salary:freelance
+
+2025-02-17 Credit Card Settlement
+    assets:bank:jpmorgan-chase       -150.00 USD
+    liabilities:credit-card
+
+2025-02-18 Exchange Money 2
+    assets:bank:revolut         -400.00 EUR
+    expenses:financial:fees          6.00 EUR
+    assets:bank:revolut          430.00 USD
+    equity:conversion
+
+2025-02-19 Taxi Ride
+    assets:cash                     -30.00 USD
+    expenses:transport:city-pass
+
+2025-02-20 Dinner Out
+    assets:bank:jpmorgan-chase       -80.00 USD
+    expenses:food:restaurants
+
+2025-02-21 Groceries
+    assets:bank:jpmorgan-chase       -90.00 USD
+    expenses:food:groceries
+
+2025-02-22 Coffee
+    assets:cash                      -5.00 USD
+    expenses:food:cafe
+
+2025-02-23 Freelance Income
+    assets:bank:jpmorgan-chase       1800.00 USD
+    income:salary:freelance
+
+2025-02-24 Restaurant Dinner
+    liabilities:credit-card        -70.00 USD
+    expenses:food:restaurants
+
+2025-02-25 Grocery Shopping
+    assets:bank:jpmorgan-chase       -65.00 USD
+    expenses:food:groceries
+
+2025-02-26 Cafe Meeting
+    liabilities:credit-card        -15.00 USD
+    expenses:food:cafe
+
+2025-02-27 ATM Withdrawal
+    assets:bank:jpmorgan-chase     -130.00 USD
+    expenses:financial:fees          4.00 USD
+    assets:cash                   126.00 USD
+
+2025-02-27 Bonus Income
+    assets:bank:revolut         1500.00 EUR
+    income:salary:freelance
+
+2025-02-28 Miscellaneous Expense
+    assets:bank:jpmorgan-chase       -40.00 USD
+    expenses:food:groceries
+
+2025-03-01 Salary Payment
+    assets:bank:jpmorgan-chase       8000.00 USD
+    income:salary:main
+
+2025-03-02 Rent
+    assets:bank:jpmorgan-chase      -2000.00 USD
+    expenses:housing:rent
+
+2025-03-02 Groceries
+    assets:bank:jpmorgan-chase       -75.00 USD
+    expenses:food:groceries
+
+2025-03-03 Restaurant
+    assets:bank:jpmorgan-chase       -60.00 USD
+    expenses:food:restaurants
+
+2025-03-03 Cafe
+    liabilities:credit-card        -20.00 USD
+    expenses:food:cafe
+
+2025-03-04 ATM Withdrawal
+    assets:bank:jpmorgan-chase     -110.00 USD
+    expenses:financial:fees          3.00 USD
+    assets:cash                    107.00 USD
+
+2025-03-05 Exchange Money
+    assets:bank:revolut         -350.00 EUR
+    expenses:financial:fees          7.00 EUR
+    assets:bank:revolut          370.00 USD
+
+2025-03-06 Freelance Income
+    assets:bank:jpmorgan-chase       2200.00 USD
+    income:salary:freelance
+
+2025-03-07 Bus Pass
+    assets:cash                     -25.00 USD
+    expenses:transport:city-pass
+
+2025-03-08 Restaurant Lunch
+    assets:bank:jpmorgan-chase       -65.00 USD
+    expenses:food:restaurants
+
+2025-03-09 Groceries
+    liabilities:credit-card        -55.00 USD
+    expenses:food:groceries
+
+2025-03-10 Cafe Break
+    assets:cash                     -10.00 USD
+    expenses:food:cafe
+
+2025-03-11 GCP Charge
+    assets:bank:revolut          -45.00 EUR
+    expenses:professional:software
+
+2025-03-12 Credit Card Settlement
+    assets:bank:jpmorgan-chase     -120.00 USD
+    liabilities:credit-card
+
+2025-03-13 Taxi Ride
+    assets:cash                     -35.00 USD
+    expenses:transport:city-pass
+
+2025-03-14 Lunch Out
+    assets:bank:jpmorgan-chase       -50.00 USD
+    expenses:food:restaurants
+
+2025-03-15 Grocery Shopping
+    assets:bank:jpmorgan-chase       -95.00 USD
+    expenses:food:groceries
+
+2025-03-16 Freelance Payment
+    assets:bank:jpmorgan-chase       2700.00 USD
+    income:salary:freelance
+
+2025-03-17 Cafe Meeting
+    liabilities:credit-card        -18.00 USD
+    expenses:food:cafe
+
+2025-03-18 ATM Withdrawal 2
+    assets:bank:jpmorgan-chase     -130.00 USD
+    expenses:financial:fees          4.00 USD
+    assets:cash                   126.00 USD
+
+2025-03-19 Bonus Income
+    assets:bank:revolut         1300.00 EUR
+    income:salary:freelance
+
+2025-03-20 Online Subscription
+    assets:bank:revolut          -20.00 EUR
+    expenses:professional:software
+
+2025-03-21 Grocery Store
+    liabilities:credit-card        -60.00 USD
+    expenses:food:groceries
+
+2025-03-22 Dinner Out
+    assets:bank:jpmorgan-chase       -75.00 USD
+    expenses:food:restaurants
+
+2025-03-23 Coffee Break
+    assets:cash                      -8.00 USD
+    expenses:food:cafe
+
+2025-03-24 Credit Card Payment
+    assets:bank:jpmorgan-chase      -110.00 USD
+    liabilities:credit-card
+
+2025-03-25 Fuel
+    assets:bank:jpmorgan-chase       -45.00 USD
+    expenses:transport:city-pass
+
+2025-03-26 Late Night Snack
+    assets:cash                      -9.00 USD
+    expenses:food:restaurants
+
+2025-03-27 * Misc Purchase
+    assets:bank:jpmorgan-chase       -35.00 USD
+    expenses:food:cafe
+
+2025-03-28 ! Evening Snack
+    ; note: test
+    assets:cash                      -7.00 USD
+    expenses:food:cafe
+
+2025-03-31 Final Adjustment
+    ; reference: abc123
+    assets:bank:jpmorgan-chase       100.00 USD
+    income:tax-refunds              -100.00 USD
