@@ -62,5 +62,4 @@ class AppServices:
     def initial_check(self) -> None:
         configs = self.read_configs()
         hledger = Hledger(configs.ledger)
-        hledger.get_version()
         hledger.check()

@@ -260,7 +260,8 @@ class Hledger:
         title = parsed_stdout["cbrTitle"]
         total = {
             r["acommodity"]: parse_aquantity(r["aquantity"])
-            for r in parsed_stdout["cbrTotals"]["prrAmounts"][0]
+            for a in parsed_stdout["cbrTotals"]["prrAmounts"]
+            for r in a
         }
         per_account = [
             ReportSectionResult(
