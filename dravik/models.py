@@ -89,13 +89,14 @@ class AppState:
     currency_labels: dict[Currency, str]
     pinned_accounts: list[tuple[AccountPath, str]]
     errors: list[Exception]
-    # charts filters is not like other filters because the filtering doesn't happen
-    # in this process, we pass it directly to hledger
+    # charts filters is not like other filters because the filtering doesn't
+    # happen in this process, we pass it directly to hledger
     charts_filters: ChartsFilters
     reports_filters: ReportsFilters
     last_charts_request_time: float = 0
     last_reports_request_time: float = 0
     requested_report: ReportType = ReportType.BALANCE_SHEET
+    show_total_row_in_transactions_table: bool = False
 
 
 class Config(BaseModel):

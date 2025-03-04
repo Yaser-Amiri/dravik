@@ -3,12 +3,22 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/dravik?style=for-the-badge)
 ![GitHub License](https://img.shields.io/github/license/Yaser-Amiri/dravik?style=for-the-badge)
 
-Dravik is a terminal-based user interface (TUI) for `hledger`, designed to streamline personal and business accounting for users who prefer a fast, keyboard-driven workflow. It provides an intuitive interface on top of `hledger`, making it easier to interact with your financial data without relying on manual text edits. 
+Dravik is a TUI for `hledger`, focused on a fast, keyboard-driven workflow for personal accounting. It provides a simple interface to interact with financial data without manual text edits.  
 
-**Note:** Dravik does **not** support all of hledger's features—only the ones I personally use. But you are welcome to add yours.
+**Note:** Dravik supports only the `hledger` features I use. You're welcome to add more. For currency conversion, I use the [equity method](https://hledger.org/currency-conversion.html#conversion-using-equity), so only that is supported.  
 
 **Tested hledger version:** 1.32
 
+
+Main Features:  
+- Accounts tree  
+- Transaction list with internal filters (shortcuts for time filters, autocomplete for account path input, etc)  
+- Historical balance chart  
+- Balance change chart  
+- Financial reports: income statement, balance sheet, cash flow  
+- Account labeling (e.g., label "Electricity" instead of `expenses:housing:utilities:electricity`)  
+- Pin accounts on the home page to see their balance  
+- Currency labels (e.g., label `$` instead of `USD`)  
 
 ---
 
