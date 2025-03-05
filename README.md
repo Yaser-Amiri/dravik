@@ -28,13 +28,15 @@ Main Features:
 ### **Recommended: Install via UV**
 Dravik can be installed using `uv`, a fast Rust-based package manager that automatically handles dependencies, including Python.
 
-#### **Linux & macOS**
 ```bash
 # Install uv (package manager):
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Restart your terminal or run:
 source $HOME/.local/bin/env
+
+# Install python 3.13 if you don't have it already
+uv python install 3.13
 
 # Install Dravik
 uv tool install --python 3.13 dravik
@@ -46,7 +48,7 @@ dravik       # Start Dravik
 ```
 
 ### **Alternative: Install via Pip**
-If you prefer using pip:
+First make sure you have Python 3.13 and then install the package with your Python package manager (pip, etc)  
 ```bash
 pip install dravik
 ```
