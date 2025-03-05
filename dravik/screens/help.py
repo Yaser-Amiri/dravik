@@ -9,6 +9,15 @@ from textual.widgets import Footer, Label, Link, Static
 
 from dravik.utils import get_app_services, get_app_state
 
+textual_log = r"""
+ _____                  _ _
+|  __ \                (_) |
+| |  | |_ __ __ ___   ___| | __
+| |  | | '__/ _` \ \ / / | |/ /
+| |__| | | | (_| |\ V /| |   <
+|_____/|_|  \__,_| \_/ |_|_|\_\
+"""
+
 
 class HelpScreen(Screen[None]):
     CSS_PATH = "../styles/help.tcss"
@@ -22,26 +31,25 @@ class HelpScreen(Screen[None]):
         dist = importlib.metadata.distribution("dravik")
         app_name = dist.metadata["name"]
         app_version = dist.metadata["version"]
-        app_summary = dist.metadata["summary"]
         app_authors = dist.metadata.get("Author-Email", "")
         app_urls = dist.metadata.get_all("Project-URL", [])
         services = get_app_services(self.app)
 
         yield Static(
             (
-                f"Paths:\n\n"
+                f"Paths:\n"
                 f"Home: {home}\n"
                 f"Python: {sys.executable}\n"
-                f"Config file: {services.app.config_path}\n"
+                f"Config file: {services.app.config_path}\n\n"
+                f"Hledger Stats:\n{hledger_stats}\n"
             ),
             id=self.ns("paths"),
         )
-        yield Static(
-            f"Hledger Stats:\n\n{hledger_stats}\n", id=self.ns("hledger-stats")
-        )
-        with Vertical(id=self.ns("about")):
+
+        with Vertical(id=self.ns("hledger-stats")):
+            yield Label(textual_log + "\n")
             yield Label("About:\n")
-            yield Label(f"Name: {app_name} ({app_summary})")
+            yield Label(f"Name: {app_name.capitalize()}")
             yield Label(f"Version: {app_version}")
             yield Label("License: GNU General Public License v3.0 only")
             yield Label("Authros:")

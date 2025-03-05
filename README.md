@@ -1,14 +1,12 @@
-# 📖 Dravik
+# Dravik
 
-![PyPI - Version](https://img.shields.io/pypi/v/dravik?style=for-the-badge)
-![GitHub License](https://img.shields.io/github/license/Yaser-Amiri/dravik?style=for-the-badge)
+[![PyPI - Version](https://img.shields.io/pypi/v/dravik)](https://pypi.org/project/dravik/)
+[![GitHub License](https://img.shields.io/github/license/Yaser-Amiri/dravik)](https://github.com/Yaser-Amiri/dravik/blob/main/LICENSE)
 
 Dravik is a TUI for `hledger`, focused on a fast, keyboard-driven workflow for personal accounting. It provides a simple interface to interact with financial data without manual text edits.  
 
-**Note:** Dravik supports only the `hledger` features I use. You're welcome to add more. For currency conversion, I use the [equity method](https://hledger.org/currency-conversion.html#conversion-using-equity), so only that is supported.  
-
-**Tested hledger version:** 1.32
-
+![Transactions List](./screenshots/tx_list.png)  
+You can see more screenshots in `screenshots` directory in the root of the project.
 
 Main Features:  
 - Accounts tree  
@@ -19,6 +17,9 @@ Main Features:
 - Account labeling (e.g., label "Electricity" instead of `expenses:housing:utilities:electricity`)  
 - Pin accounts on the home page to see their balance  
 - Currency labels (e.g., label `$` instead of `USD`)  
+
+**Note:** Dravik supports only the `hledger` features I use. You're welcome to add more. For currency conversion, I use the [equity method](https://hledger.org/currency-conversion.html#conversion-using-equity), so only that is supported.  
+**Tested hledger version:** 1.32
 
 ---
 
