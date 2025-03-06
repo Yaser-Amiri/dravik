@@ -56,6 +56,8 @@ class HoldingsLabel(Label):
             )
             if values:
                 self.update(f"{account_label} => {values}")
+            else:
+                self.update(f"{account_label} => 0")
 
         self.watch(self.app, "state", _x)
 

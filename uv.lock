@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.13"
 
 [[package]]
@@ -109,7 +110,6 @@ wheels = [
 
 [[package]]
 name = "dravik"
-version = "0.18.post1.dev1+g93525f4.d20250304"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
@@ -129,7 +129,7 @@ dev = [
 requires-dist = [
     { name = "pydantic", specifier = "==2.10.6" },
     { name = "textual", specifier = "==1.0.0" },
-    { name = "textual-plotext", specifier = ">=1.0.1" },
+    { name = "textual-plotext", specifier = "==1.0.1" },
 ]
 
 [package.metadata.requires-dev]
