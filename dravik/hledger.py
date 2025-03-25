@@ -99,6 +99,7 @@ class Hledger:
             "bal",
             account,
             "--historical",
+            "--cumulative",
             "--daily",
             "--begin",
             from_date.strftime("%Y-%m-%d"),
