@@ -10,8 +10,8 @@ readme = "README.md"
 requires-python = ">=3.13"
 keywords = ["python", "cli", "hledger", "python3", "UV", "textual", "terminal", "tui", "accounting"]
 dependencies = [
-    "pydantic==2.10.6",
-    "textual==1.0.0",
+    "pydantic==2.11.7",
+    "textual==5.0.1",
     "textual-plotext==1.0.1",
 ]
 classifiers = [
